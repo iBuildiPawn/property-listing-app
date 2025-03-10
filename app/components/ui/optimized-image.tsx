@@ -25,7 +25,7 @@ export default function OptimizedImage({
   ...props
 }: OptimizedImageProps) {
   const [error, setError] = useState(false);
-  const [imageSrc, setImageSrc] = useState<string>('');
+  const [imageSrc, setImageSrc] = useState<string>(getPlaceholderImage(fallbackType));
   const [attemptedSupabase, setAttemptedSupabase] = useState(false);
   
   // Get the fallback image based on the type
@@ -37,7 +37,19 @@ export default function OptimizedImage({
     setAttemptedSupabase(false);
     
     // Get a valid image URL or use the fallback
+    if (!src || src === '') {
+      setImageSrc(fallbackImage);
+      return;
+    }
+    
     const validSrc = getValidImageUrl(src, fallbackImage);
+    
+    // Ensure we never set an empty string as the image source
+    if (!validSrc || validSrc === '') {
+      setImageSrc(fallbackImage);
+      return;
+    }
+    
     setImageSrc(validSrc);
     
     // Debug image URL if debug is enabled
@@ -75,9 +87,12 @@ export default function OptimizedImage({
     setImageSrc(fallbackImage);
   };
   
+  // Ensure we never pass an empty string as src
+  const finalSrc = (!imageSrc || imageSrc === '') ? fallbackImage : imageSrc;
+  
   return (
     <Image
-      src={error ? fallbackImage : imageSrc}
+      src={finalSrc}
       alt={alt}
       onError={handleError}
       placeholder="blur"

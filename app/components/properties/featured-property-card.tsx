@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { Database } from '@/app/types/database.types';
-import { BedDouble, Bath, Square, MapPin, Lock } from 'lucide-react';
-import { useState, memo } from 'react';
+import { BedDouble, Bath, Square, MapPin, Lock, Image as ImageIcon } from 'lucide-react';
+import { useState, memo, useEffect } from 'react';
 import { getResponsiveImageSizes } from '@/app/utils/image-optimization';
 import OptimizedImage from '@/app/components/ui/optimized-image';
 import { AnimatedCard } from '@/app/components/animations';
 import { Button } from '@/app/components/ui/button';
+import { getValidImageUrl } from '@/app/utils/image-utils';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 
@@ -25,6 +26,15 @@ const FeaturedPropertyCard = memo(function FeaturedPropertyCard({
   index = 0
 }: FeaturedPropertyCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [mainImage, setMainImage] = useState<string>('/placeholder-property.jpg');
+  
+  useEffect(() => {
+    // Ensure we have a valid image URL
+    if (property.images && property.images.length > 0) {
+      const validImageUrl = getValidImageUrl(property.images[0], '/placeholder-property.jpg');
+      setMainImage(validImageUrl);
+    }
+  }, [property.images]);
   
   const formatPrice = (price: number) => {
     return price >= 1000 
@@ -52,17 +62,24 @@ const FeaturedPropertyCard = memo(function FeaturedPropertyCard({
       >
         {/* Image */}
         <div className="relative h-48 w-full overflow-hidden sm:h-52 md:h-60 lg:h-64">
-          <OptimizedImage
-            src={property.images[0]}
-            alt={property.title}
-            fill
-            sizes={getResponsiveImageSizes()}
-            className={`object-cover transition-transform duration-300 ${
-              isHovered ? 'scale-110' : 'scale-100'
-            }`}
-            priority={shouldPrioritize}
-            fallbackType="property"
-          />
+          {mainImage ? (
+            <OptimizedImage
+              src={mainImage}
+              alt={property.title}
+              fill
+              sizes={getResponsiveImageSizes()}
+              className={`object-cover transition-transform duration-300 ${
+                isHovered ? 'scale-110' : 'scale-100'
+              }`}
+              priority={shouldPrioritize}
+              fallbackType="property"
+              debug={false}
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-muted">
+              <ImageIcon className="h-12 w-12 text-muted-foreground" />
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           
           {/* Price tag - only shown if authenticated */}
