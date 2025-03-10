@@ -1,15 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, User } from 'lucide-react';
 import { 
   MotionWrapper, 
   StaggerContainer, 
   AnimatedButton 
 } from '@/app/components/animations';
 import FeaturedPropertiesSection from '@/app/components/properties/featured-properties-section';
+import { useAuth } from '@/app/contexts/auth-context';
+import { Button } from '@/app/components/ui/button';
 
 export default function Home() {
+  const { user, isLoading } = useAuth();
+
   return (
     <main className="flex min-h-screen flex-col items-center">
       {/* Hero Section */}
@@ -28,31 +32,61 @@ export default function Home() {
           </MotionWrapper>
           
           <MotionWrapper variant="scale" delay={0.6}>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <AnimatedButton
-                variant="default"
-                size="lg"
-                icon={<ArrowRight className="h-4 w-4" />}
-                iconPosition="right"
-                onClick={() => {}}
-              >
-                <Link href="/routes/auth/login">
-                  Login
-                </Link>
-              </AnimatedButton>
-              
-              <AnimatedButton
-                variant="outline"
-                size="lg"
-                icon={<ArrowRight className="h-4 w-4" />}
-                iconPosition="right"
-                onClick={() => {}}
-              >
-                <Link href="/routes/auth/register">
-                  Register
-                </Link>
-              </AnimatedButton>
-            </div>
+            {isLoading ? (
+              <div className="h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+            ) : user ? (
+              <div className="flex flex-col sm:flex-row gap-4">
+                <AnimatedButton
+                  variant="default"
+                  size="lg"
+                  icon={<User className="h-4 w-4" />}
+                  iconPosition="left"
+                  onClick={() => {}}
+                >
+                  <Link href="/routes/dashboard">
+                    My Dashboard
+                  </Link>
+                </AnimatedButton>
+                
+                <AnimatedButton
+                  variant="outline"
+                  size="lg"
+                  icon={<ArrowRight className="h-4 w-4" />}
+                  iconPosition="right"
+                  onClick={() => {}}
+                >
+                  <Link href="/routes/public/properties">
+                    Browse Properties
+                  </Link>
+                </AnimatedButton>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-4">
+                <AnimatedButton
+                  variant="default"
+                  size="lg"
+                  icon={<ArrowRight className="h-4 w-4" />}
+                  iconPosition="right"
+                  onClick={() => {}}
+                >
+                  <Link href="/routes/auth/login">
+                    Login
+                  </Link>
+                </AnimatedButton>
+                
+                <AnimatedButton
+                  variant="outline"
+                  size="lg"
+                  icon={<ArrowRight className="h-4 w-4" />}
+                  iconPosition="right"
+                  onClick={() => {}}
+                >
+                  <Link href="/routes/auth/register">
+                    Register
+                  </Link>
+                </AnimatedButton>
+              </div>
+            )}
           </MotionWrapper>
         </StaggerContainer>
       </section>
