@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { Plus, Edit, Trash2, AlertCircle, Truck } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { OptimizedImage } from '@/app/components/ui/optimized-image';
+import OptimizedImage from '@/app/components/ui/optimized-image';
 import { Badge } from '@/app/components/ui/badge';
 import { 
   AlertDialog,
