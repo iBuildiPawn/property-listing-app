@@ -17,10 +17,18 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  ZoomIn
+  ZoomIn,
+  Loader2
 } from 'lucide-react';
 import { getValidImageUrl, getPlaceholderImage } from '@/app/utils/image-utils';
 import OptimizedImage from '@/app/components/ui/optimized-image';
+import { 
+  MotionWrapper, 
+  StaggerContainer,
+  AnimatedButton,
+  ScrollAnimation
+} from '@/app/components/animations';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type TransportationService = Database['public']['Tables']['transportation_services']['Row'];
 
@@ -153,7 +161,7 @@ export default function TransportationDetailPage({ params }: { params: { id: str
     return (
       <div className="container mx-auto py-12 px-4 flex justify-center items-center min-h-[60vh]">
         <div className="flex flex-col items-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <span className="mt-4 text-muted-foreground">Loading service details...</span>
         </div>
       </div>
@@ -181,7 +189,7 @@ export default function TransportationDetailPage({ params }: { params: { id: str
 
   return (
     <div className="container mx-auto py-12 px-4">
-      <div className="mb-6">
+      <MotionWrapper variant="fade" className="mb-6">
         <Link 
           href="/routes/public/transportation" 
           className="inline-flex items-center text-primary hover:text-primary/90"
@@ -189,11 +197,11 @@ export default function TransportationDetailPage({ params }: { params: { id: str
           <ArrowLeft className="mr-2 h-4 w-4" />
           <span>Back to transportation services</span>
         </Link>
-      </div>
+      </MotionWrapper>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left column - Images */}
-        <div className="lg:col-span-2">
+        <MotionWrapper variant="slide" direction="right" className="lg:col-span-2">
           <div 
             className="relative rounded-lg overflow-hidden aspect-[16/9] cursor-pointer group"
             onClick={openPreview}
@@ -213,7 +221,12 @@ export default function TransportationDetailPage({ params }: { params: { id: str
           </div>
           
           {service.images.length > 1 && (
-            <div className="mt-4 grid grid-cols-5 gap-2">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mt-4 grid grid-cols-5 gap-2"
+            >
               {service.images.map((image, index) => (
                 <button
                   key={index}
@@ -234,12 +247,12 @@ export default function TransportationDetailPage({ params }: { params: { id: str
                   />
                 </button>
               ))}
-            </div>
+            </motion.div>
           )}
-        </div>
+        </MotionWrapper>
         
         {/* Right column - Details */}
-        <div>
+        <MotionWrapper variant="slide" direction="left" className="space-y-6">
           <div className="bg-card rounded-lg border border-border p-6">
             <div className="flex justify-between items-start">
               <div>
@@ -253,13 +266,13 @@ export default function TransportationDetailPage({ params }: { params: { id: str
                 </div>
               </div>
               
-              <button
+              <AnimatedButton
                 onClick={handleShare}
                 className="rounded-full bg-background p-2 hover:bg-muted/50"
                 aria-label="Share service"
               >
                 <Share2 className="h-5 w-5 text-muted-foreground" />
-              </button>
+              </AnimatedButton>
             </div>
             
             <div className="mt-6 border-t border-border pt-4">
@@ -274,23 +287,35 @@ export default function TransportationDetailPage({ params }: { params: { id: str
                         className={`h-4 w-4 ${i < priceInfo.icon ? 'text-primary' : 'text-muted-foreground/30'}`} 
                       />
                     ))}
-                    <span className="ml-1 text-xs text-muted-foreground">KWD</span>
+                    <span className="ml-1 text-xs">KWD</span>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="mt-6 space-y-4">
-              <div className="flex items-center">
+            <StaggerContainer className="mt-6 space-y-4" staggerDelay={0.1}>
+              <motion.div 
+                className="flex items-center"
+                variants={{
+                  hidden: { opacity: 0, x: -10 },
+                  visible: { opacity: 1, x: 0 }
+                }}
+              >
                 <Phone className="mr-3 h-5 w-5 text-primary" />
                 <div>
                   <h3 className="text-sm font-medium">Contact</h3>
                   <p className="text-sm text-muted-foreground">{service.contact_info}</p>
                 </div>
-              </div>
+              </motion.div>
               
               {service.website && (
-                <div className="flex items-center">
+                <motion.div 
+                  className="flex items-center"
+                  variants={{
+                    hidden: { opacity: 0, x: -10 },
+                    visible: { opacity: 1, x: 0 }
+                  }}
+                >
                   <Globe className="mr-3 h-5 w-5 text-primary" />
                   <div>
                     <h3 className="text-sm font-medium">Website</h3>
@@ -303,10 +328,16 @@ export default function TransportationDetailPage({ params }: { params: { id: str
                       {service.website}
                     </a>
                   </div>
-                </div>
+                </motion.div>
               )}
               
-              <div className="flex items-center">
+              <motion.div 
+                className="flex items-center"
+                variants={{
+                  hidden: { opacity: 0, x: -10 },
+                  visible: { opacity: 1, x: 0 }
+                }}
+              >
                 <Clock className="mr-3 h-5 w-5 text-primary" />
                 <div>
                   <h3 className="text-sm font-medium">Availability</h3>
@@ -314,140 +345,129 @@ export default function TransportationDetailPage({ params }: { params: { id: str
                     {service.is_available ? 'Currently Available' : 'Currently Unavailable'}
                   </p>
                 </div>
+              </motion.div>
+              
+              <div className="mt-6">
+                <AnimatedButton
+                  variant="default"
+                  className="w-full rounded-md px-4 py-2"
+                >
+                  Contact Service
+                </AnimatedButton>
               </div>
-            </div>
-            
-            <div className="mt-6">
-              <button className="w-full rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
-                Contact Service
-              </button>
-            </div>
+            </StaggerContainer>
           </div>
-        </div>
+        </MotionWrapper>
       </div>
       
-      {/* Image Preview Modal */}
-      {isPreviewOpen && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center">
-          <div className="relative w-full h-full flex flex-col">
-            {/* Close button */}
-            <button 
-              onClick={closePreview}
-              className="absolute top-4 right-4 z-10 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
-              aria-label="Close preview"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            
-            {/* Image counter */}
-            <div className="absolute top-4 left-4 z-10 bg-black/50 rounded-md px-3 py-1 text-white text-sm">
-              {activeImageIndex + 1} / {service.images.length}
-            </div>
-            
-            {/* Main image container */}
-            <div className="flex-1 flex items-center justify-center p-4 sm:p-10">
-              <div className="relative w-full h-full max-w-5xl max-h-[80vh] mx-auto">
-                <OptimizedImage
-                  src={service.images[activeImageIndex]}
-                  alt={service.name}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 768px) 100vw, 80vw"
-                  priority
-                  fallbackType="transportation"
-                />
-              </div>
-            </div>
-            
-            {/* Navigation buttons */}
-            {service.images.length > 1 && (
-              <>
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    goToPrevImage();
-                  }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft className="h-6 w-6" />
-                </button>
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    goToNextImage();
-                  }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
-                  aria-label="Next image"
-                >
-                  <ChevronRight className="h-6 w-6" />
-                </button>
-              </>
-            )}
-            
-            {/* Thumbnail navigation */}
-            {service.images.length > 1 && (
-              <div className="p-4 flex justify-center">
-                <div className="flex space-x-2 overflow-x-auto max-w-full pb-2">
-                  {service.images.map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setActiveImageIndex(index)}
-                      className={`relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden border-2 ${
-                        activeImageIndex === index ? 'border-primary' : 'border-transparent'
-                      }`}
-                    >
-                      <OptimizedImage
-                        src={image}
-                        alt={`Thumbnail ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        fallbackType="transportation"
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-      
       {/* Description */}
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">About this service</h2>
+      <ScrollAnimation effect="fade" className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Description</h2>
         <div className="bg-card rounded-lg border border-border p-6">
           <p className="whitespace-pre-line">{service.description}</p>
         </div>
-      </div>
+      </ScrollAnimation>
       
-      {/* Location */}
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Location</h2>
-        <div className="bg-card rounded-lg border border-border p-6">
-          <div className="flex items-center">
-            <MapPin className="mr-2 h-5 w-5 text-primary" />
-            <span>{service.location}</span>
-          </div>
-          {/* In a real app, you would integrate a map here */}
-          <div className="mt-4 aspect-[16/9] bg-muted rounded-md flex items-center justify-center">
-            <p className="text-muted-foreground">Map placeholder</p>
-          </div>
-        </div>
-      </div>
-      
-      {/* Related properties */}
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Related Properties</h2>
-        <div className="bg-card rounded-lg border border-border p-6">
-          <div className="flex items-center justify-center py-8">
-            <Info className="mr-2 h-5 w-5 text-muted-foreground" />
-            <p className="text-muted-foreground">
-              Properties that might need this service will be displayed here.
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Image Preview Modal */}
+      <AnimatePresence>
+        {isPreviewOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          >
+            <div className="relative w-full h-full flex flex-col">
+              {/* Close button */}
+              <AnimatedButton 
+                onClick={closePreview}
+                className="absolute top-4 right-4 z-10 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
+                aria-label="Close preview"
+              >
+                <X className="h-6 w-6" />
+              </AnimatedButton>
+              
+              {/* Image counter */}
+              <div className="absolute top-4 left-4 z-10 bg-black/50 rounded-md px-3 py-1 text-white text-sm">
+                {activeImageIndex + 1} / {service.images.length}
+              </div>
+              
+              {/* Main image container */}
+              <div className="flex-1 flex items-center justify-center p-4 sm:p-10">
+                <motion.div 
+                  key={activeImageIndex}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative w-full h-full max-w-5xl max-h-[80vh] mx-auto"
+                >
+                  <OptimizedImage
+                    src={service.images[activeImageIndex]}
+                    alt={service.name}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, 80vw"
+                    priority
+                    fallbackType="transportation"
+                  />
+                </motion.div>
+              </div>
+              
+              {/* Navigation buttons */}
+              {service.images.length > 1 && (
+                <>
+                  <AnimatedButton 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goToPrevImage();
+                    }}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </AnimatedButton>
+                  <AnimatedButton 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goToNextImage();
+                    }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </AnimatedButton>
+                </>
+              )}
+              
+              {/* Thumbnail navigation */}
+              {service.images.length > 1 && (
+                <div className="p-4 flex justify-center">
+                  <div className="flex space-x-2 overflow-x-auto max-w-full pb-2">
+                    {service.images.map((image, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setActiveImageIndex(index)}
+                        className={`relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden border-2 ${
+                          activeImageIndex === index ? 'border-primary' : 'border-transparent'
+                        }`}
+                      >
+                        <OptimizedImage
+                          src={image}
+                          alt={`Thumbnail ${index + 1}`}
+                          fill
+                          className="object-cover"
+                          fallbackType="transportation"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 } 

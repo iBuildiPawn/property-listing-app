@@ -18,10 +18,18 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  ZoomIn
+  ZoomIn,
+  Loader2
 } from 'lucide-react';
 import { getValidImageUrl, getPlaceholderImage } from '@/app/utils/image-utils';
 import OptimizedImage from '@/app/components/ui/optimized-image';
+import { 
+  MotionWrapper, 
+  StaggerContainer,
+  AnimatedButton,
+  ScrollAnimation
+} from '@/app/components/animations';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 
@@ -146,7 +154,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
     return (
       <div className="container mx-auto py-12 px-4 flex justify-center items-center min-h-[60vh]">
         <div className="flex flex-col items-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <span className="mt-4 text-muted-foreground">Loading property details...</span>
         </div>
       </div>
@@ -172,7 +180,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
   return (
     <div className="container mx-auto py-12 px-4">
-      <div className="mb-6">
+      <MotionWrapper variant="fade" className="mb-6">
         <Link 
           href="/routes/public/properties" 
           className="inline-flex items-center text-primary hover:text-primary/90"
@@ -180,11 +188,11 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           <ArrowLeft className="mr-2 h-4 w-4" />
           <span>Back to properties</span>
         </Link>
-      </div>
+      </MotionWrapper>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left column - Images */}
-        <div className="lg:col-span-2">
+        <MotionWrapper variant="slide" direction="right" className="lg:col-span-2">
           <div 
             className="relative rounded-lg overflow-hidden aspect-[16/9] cursor-pointer group"
             onClick={openPreview}
@@ -204,7 +212,12 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           </div>
           
           {property.images.length > 1 && (
-            <div className="mt-4 grid grid-cols-5 gap-2">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mt-4 grid grid-cols-5 gap-2"
+            >
               {property.images.map((image, index) => (
                 <button
                   key={index}
@@ -225,12 +238,12 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                   />
                 </button>
               ))}
-            </div>
+            </motion.div>
           )}
-        </div>
+        </MotionWrapper>
         
         {/* Right column - Details */}
-        <div>
+        <MotionWrapper variant="slide" direction="left" className="space-y-6">
           <div className="bg-card rounded-lg border border-border p-6">
             <div className="flex justify-between items-start">
               <div>
@@ -243,22 +256,22 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               
               <div className="flex space-x-2">
                 {user && (
-                  <button
+                  <AnimatedButton
                     onClick={toggleFavorite}
                     className="rounded-full bg-background p-2 hover:bg-muted/50"
                     aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
                   >
                     <Heart className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
-                  </button>
+                  </AnimatedButton>
                 )}
                 
-                <button
+                <AnimatedButton
                   onClick={handleShare}
                   className="rounded-full bg-background p-2 hover:bg-muted/50"
                   aria-label="Share property"
                 >
                   <Share2 className="h-5 w-5 text-muted-foreground" />
-                </button>
+                </AnimatedButton>
               </div>
             </div>
             
@@ -284,156 +297,153 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                 </div>
               </div>
               
-              <div className="mt-6">
-                <h2 className="text-lg font-semibold mb-2">Property Type</h2>
-                <p className="capitalize">{property.property_type}</p>
-              </div>
-              
-              <div className="mt-6">
-                <h2 className="text-lg font-semibold mb-2">Amenities</h2>
-                <ul className="grid grid-cols-2 gap-2">
-                  {property.amenities.map((amenity, index) => (
-                    <li key={index} className="flex items-center">
-                      <Check className="mr-2 h-4 w-4 text-primary" />
-                      <span>{amenity}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="mt-6">
-                <button className="w-full rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
-                  Contact Agent
-                </button>
-              </div>
+              <StaggerContainer className="mt-6 space-y-6" staggerDelay={0.1}>
+                <div>
+                  <h2 className="text-lg font-semibold mb-2">Property Type</h2>
+                  <p className="capitalize">{property.property_type}</p>
+                </div>
+                
+                <div>
+                  <h2 className="text-lg font-semibold mb-2">Amenities</h2>
+                  <ul className="grid grid-cols-2 gap-2">
+                    {property.amenities.map((amenity, index) => (
+                      <motion.li 
+                        key={index} 
+                        className="flex items-center"
+                        variants={{
+                          hidden: { opacity: 0, x: -10 },
+                          visible: { opacity: 1, x: 0 }
+                        }}
+                      >
+                        <Check className="mr-2 h-4 w-4 text-primary" />
+                        <span>{amenity}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div>
+                  <AnimatedButton
+                    variant="default"
+                    className="w-full rounded-md px-4 py-2"
+                  >
+                    Contact Agent
+                  </AnimatedButton>
+                </div>
+              </StaggerContainer>
             </div>
           </div>
-        </div>
+        </MotionWrapper>
       </div>
       
-      {/* Image Preview Modal */}
-      {isPreviewOpen && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center">
-          <div className="relative w-full h-full flex flex-col">
-            {/* Close button */}
-            <button 
-              onClick={closePreview}
-              className="absolute top-4 right-4 z-10 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
-              aria-label="Close preview"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            
-            {/* Image counter */}
-            <div className="absolute top-4 left-4 z-10 bg-black/50 rounded-md px-3 py-1 text-white text-sm">
-              {activeImageIndex + 1} / {property.images.length}
-            </div>
-            
-            {/* Main image container */}
-            <div className="flex-1 flex items-center justify-center p-4 sm:p-10">
-              <div className="relative w-full h-full max-w-5xl max-h-[80vh] mx-auto">
-                <OptimizedImage
-                  src={property.images[activeImageIndex]}
-                  alt={property.title}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 768px) 100vw, 80vw"
-                  priority
-                  fallbackType="property"
-                />
-              </div>
-            </div>
-            
-            {/* Navigation buttons */}
-            {property.images.length > 1 && (
-              <>
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    goToPrevImage();
-                  }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft className="h-6 w-6" />
-                </button>
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    goToNextImage();
-                  }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
-                  aria-label="Next image"
-                >
-                  <ChevronRight className="h-6 w-6" />
-                </button>
-              </>
-            )}
-            
-            {/* Thumbnail navigation */}
-            {property.images.length > 1 && (
-              <div className="p-4 flex justify-center">
-                <div className="flex space-x-2 overflow-x-auto max-w-full pb-2">
-                  {property.images.map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setActiveImageIndex(index)}
-                      className={`relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden border-2 ${
-                        activeImageIndex === index ? 'border-primary' : 'border-transparent'
-                      }`}
-                    >
-                      <OptimizedImage
-                        src={image}
-                        alt={`Thumbnail ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        fallbackType="property"
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-      
       {/* Description */}
-      <div className="mt-8">
+      <ScrollAnimation effect="fade" className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Description</h2>
         <div className="bg-card rounded-lg border border-border p-6">
           <p className="whitespace-pre-line">{property.description}</p>
         </div>
-      </div>
+      </ScrollAnimation>
       
-      {/* Location */}
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Location</h2>
-        <div className="bg-card rounded-lg border border-border p-6">
-          <div className="flex items-center">
-            <MapPin className="mr-2 h-5 w-5 text-primary" />
-            <span>{property.location}</span>
-          </div>
-          {/* In a real app, you would integrate a map here */}
-          <div className="mt-4 aspect-[16/9] bg-muted rounded-md flex items-center justify-center">
-            <p className="text-muted-foreground">Map placeholder</p>
-          </div>
-        </div>
-      </div>
-      
-      {/* Transportation options */}
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Transportation Options</h2>
-        <div className="bg-card rounded-lg border border-border p-6">
-          <p className="text-center text-muted-foreground py-8">
-            Transportation options will be displayed here.
-            <br />
-            <Link href="/routes/public/transportation" className="text-primary hover:text-primary/90">
-              Browse all transportation services
-            </Link>
-          </p>
-        </div>
-      </div>
+      {/* Image Preview Modal */}
+      <AnimatePresence>
+        {isPreviewOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          >
+            <div className="relative w-full h-full flex flex-col">
+              {/* Close button */}
+              <AnimatedButton 
+                onClick={closePreview}
+                className="absolute top-4 right-4 z-10 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
+                aria-label="Close preview"
+              >
+                <X className="h-6 w-6" />
+              </AnimatedButton>
+              
+              {/* Image counter */}
+              <div className="absolute top-4 left-4 z-10 bg-black/50 rounded-md px-3 py-1 text-white text-sm">
+                {activeImageIndex + 1} / {property.images.length}
+              </div>
+              
+              {/* Main image container */}
+              <div className="flex-1 flex items-center justify-center p-4 sm:p-10">
+                <motion.div 
+                  key={activeImageIndex}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative w-full h-full max-w-5xl max-h-[80vh] mx-auto"
+                >
+                  <OptimizedImage
+                    src={property.images[activeImageIndex]}
+                    alt={property.title}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, 80vw"
+                    priority
+                    fallbackType="property"
+                  />
+                </motion.div>
+              </div>
+              
+              {/* Navigation buttons */}
+              {property.images.length > 1 && (
+                <>
+                  <AnimatedButton 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goToPrevImage();
+                    }}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </AnimatedButton>
+                  <AnimatedButton 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goToNextImage();
+                    }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </AnimatedButton>
+                </>
+              )}
+              
+              {/* Thumbnail navigation */}
+              {property.images.length > 1 && (
+                <div className="p-4 flex justify-center">
+                  <div className="flex space-x-2 overflow-x-auto max-w-full pb-2">
+                    {property.images.map((image, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setActiveImageIndex(index)}
+                        className={`relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden border-2 ${
+                          activeImageIndex === index ? 'border-primary' : 'border-transparent'
+                        }`}
+                      >
+                        <OptimizedImage
+                          src={image}
+                          alt={`Thumbnail ${index + 1}`}
+                          fill
+                          className="object-cover"
+                          fallbackType="property"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 } 
