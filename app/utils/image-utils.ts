@@ -23,6 +23,52 @@ export const normalizeUrl = (url: string): string => {
 };
 
 /**
+ * Checks if a URL is a Supabase storage URL
+ * @param url The URL to check
+ * @returns Whether the URL is a Supabase storage URL
+ */
+export const isSupabaseStorageUrl = (url: string): boolean => {
+  return url.includes('storage/v1/object/public') || 
+         url.includes('/storage/v1/object/public');
+};
+
+/**
+ * Transforms a Supabase storage URL to a public URL format
+ * This is needed because direct storage URLs might require authentication
+ * @param url The Supabase storage URL
+ * @returns A public URL for the image
+ */
+export const transformSupabaseUrl = (url: string): string => {
+  // If it's not a Supabase URL, return as is
+  if (!isSupabaseStorageUrl(url)) {
+    return url;
+  }
+  
+  try {
+    // Extract the bucket and file path from the URL
+    const regex = /\/storage\/v1\/object\/public\/([^/]+)\/(.+)/;
+    const match = url.match(regex);
+    
+    if (!match) {
+      console.warn('Could not parse Supabase storage URL:', url);
+      return url;
+    }
+    
+    const [, bucket, filePath] = match;
+    
+    // Use the public URL format instead
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const cleanSupabaseUrl = supabaseUrl.endsWith('/') ? supabaseUrl.slice(0, -1) : supabaseUrl;
+    
+    // Construct the public URL
+    return normalizeUrl(`${cleanSupabaseUrl}/storage/v1/object/public/${bucket}/${filePath}`);
+  } catch (error) {
+    console.error('Error transforming Supabase URL:', error);
+    return url;
+  }
+};
+
+/**
  * Validates and transforms image URLs to ensure they work correctly
  * @param url The original image URL
  * @param fallbackUrl The fallback URL to use if the original is invalid
@@ -31,9 +77,16 @@ export const normalizeUrl = (url: string): string => {
 export const getValidImageUrl = (url: string | null | undefined, fallbackUrl: string): string => {
   if (!url) return fallbackUrl;
   
-  // If it's already a valid absolute URL, use it directly
+  // If it's already a valid absolute URL, normalize it
   if (url.startsWith('http://') || url.startsWith('https://')) {
-    return normalizeUrl(url);
+    const normalizedUrl = normalizeUrl(url);
+    
+    // If it's a Supabase storage URL, transform it to the public URL format
+    if (isSupabaseStorageUrl(normalizedUrl)) {
+      return transformSupabaseUrl(normalizedUrl);
+    }
+    
+    return normalizedUrl;
   }
   
   // If it's a Supabase storage URL that starts with /storage/v1/
@@ -41,7 +94,14 @@ export const getValidImageUrl = (url: string | null | undefined, fallbackUrl: st
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
     // Remove trailing slash from supabaseUrl if it exists to prevent double slashes
     const cleanSupabaseUrl = supabaseUrl.endsWith('/') ? supabaseUrl.slice(0, -1) : supabaseUrl;
-    return normalizeUrl(`${cleanSupabaseUrl}${url}`);
+    const fullUrl = normalizeUrl(`${cleanSupabaseUrl}${url}`);
+    
+    // Transform to public URL format if needed
+    if (isSupabaseStorageUrl(fullUrl)) {
+      return transformSupabaseUrl(fullUrl);
+    }
+    
+    return fullUrl;
   }
   
   // If it's a relative path starting with /, it's from the public folder
@@ -54,7 +114,14 @@ export const getValidImageUrl = (url: string | null | undefined, fallbackUrl: st
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
     // Remove trailing slash from supabaseUrl if it exists to prevent double slashes
     const cleanSupabaseUrl = supabaseUrl.endsWith('/') ? supabaseUrl.slice(0, -1) : supabaseUrl;
-    return normalizeUrl(`${cleanSupabaseUrl}/${url}`);
+    const fullUrl = normalizeUrl(`${cleanSupabaseUrl}/${url}`);
+    
+    // Transform to public URL format if needed
+    if (isSupabaseStorageUrl(fullUrl)) {
+      return transformSupabaseUrl(fullUrl);
+    }
+    
+    return fullUrl;
   }
   
   // If none of the above, return the fallback
@@ -82,7 +149,7 @@ export const debugImageUrl = (url: string | null | undefined, label = 'Image URL
     console.log('Is absolute URL:', isAbsolute);
     
     // Check if it's a Supabase URL
-    const isSupabaseUrl = url.includes('storage/v1/') || url.includes('/storage/v1/');
+    const isSupabaseUrl = isSupabaseStorageUrl(url);
     console.log('Is Supabase storage URL:', isSupabaseUrl);
     
     // Log the Supabase URL from environment if relevant
@@ -102,6 +169,11 @@ export const debugImageUrl = (url: string | null | undefined, label = 'Image URL
     // Show normalized URL
     const normalizedUrl = normalizeUrl(url);
     console.log('Normalized URL:', normalizedUrl);
+    
+    // If it's a Supabase URL, show the transformed version
+    if (isSupabaseUrl) {
+      console.log('Transformed Supabase URL:', transformSupabaseUrl(normalizedUrl));
+    }
     
     console.groupEnd();
   }
