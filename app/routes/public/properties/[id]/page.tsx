@@ -203,6 +203,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               fill
               className="object-cover"
               fallbackType="property"
+              debug={true}
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
               <div className="bg-black/50 rounded-full p-2">
