@@ -17,7 +17,7 @@ export interface Database {
           full_name: string | null
           avatar_url: string | null
           email: string
-          user_type: 'renter' | 'buyer' | null
+          user_type: 'renter' | 'buyer' | 'owner' | null
           is_admin: boolean
         }
         Insert: {
@@ -27,7 +27,7 @@ export interface Database {
           full_name?: string | null
           avatar_url?: string | null
           email: string
-          user_type?: 'renter' | 'buyer' | null
+          user_type?: 'renter' | 'buyer' | 'owner' | null
           is_admin?: boolean
         }
         Update: {
@@ -37,7 +37,7 @@ export interface Database {
           full_name?: string | null
           avatar_url?: string | null
           email?: string
-          user_type?: 'renter' | 'buyer' | null
+          user_type?: 'renter' | 'buyer' | 'owner' | null
           is_admin?: boolean
         }
         Relationships: [

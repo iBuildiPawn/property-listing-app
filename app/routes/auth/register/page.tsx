@@ -113,8 +113,7 @@ export default function RegisterPage() {
               >
                 <option value="renter">Renter</option>
                 <option value="buyer">Buyer</option>
-                <option value="investor">Investor</option>
-                <option value="student">Student</option>
+                <option value="owner">Owner</option>
               </select>
             </div>
             

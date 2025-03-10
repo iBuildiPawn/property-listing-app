@@ -32,7 +32,7 @@ const profileFormSchema = z.object({
     message: 'Name must be at least 2 characters.',
   }),
   avatar_url: z.string().optional(),
-  user_type: z.enum(['renter', 'buyer'], {
+  user_type: z.enum(['renter', 'buyer', 'owner'], {
     required_error: 'Please select a user type.',
   }),
   email: z.string().email({
@@ -46,7 +46,7 @@ interface ProfileFormProps {
   initialData?: {
     full_name?: string;
     avatar_url?: string;
-    user_type?: 'renter' | 'buyer';
+    user_type?: 'renter' | 'buyer' | 'owner';
     email?: string;
   };
 }
@@ -164,6 +164,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                     <SelectContent>
                       <SelectItem value="renter">Renter</SelectItem>
                       <SelectItem value="buyer">Buyer</SelectItem>
+                      <SelectItem value="owner">Owner</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription>

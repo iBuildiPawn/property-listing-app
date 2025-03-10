@@ -59,6 +59,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, fullName: string, userType: string) => {
     setIsLoading(true);
     
+    // Validate user type
+    if (!['renter', 'buyer', 'owner'].includes(userType)) {
+      return { error: { message: 'Invalid user type. Must be renter, buyer, or owner.' } };
+    }
+    
     // Sign up with Supabase
     const { data, error } = await supabase.auth.signUp({
       email,
