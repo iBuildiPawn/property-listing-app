@@ -125,8 +125,8 @@ export default function PropertiesPage() {
   const propertyTypes = [
     { value: 'all', label: 'All Types', icon: Home },
     { value: 'apartment', label: 'Apartments', icon: Building },
-    { value: 'house', label: 'Houses', icon: Home },
-    { value: 'condo', label: 'Condos', icon: Building },
+    { value: 'house', label: 'Villas', icon: Home },
+    { value: 'condo', label: 'Penthouses', icon: Building },
     { value: 'townhouse', label: 'Townhouses', icon: Home },
     { value: 'land', label: 'Land', icon: Warehouse },
   ];
@@ -161,9 +161,9 @@ export default function PropertiesPage() {
   return (
     <div className="container mx-auto py-8 px-4 sm:py-12">
       <div className="mb-6 text-center sm:mb-8">
-        <h1 className="text-2xl font-bold mb-2 sm:text-3xl sm:mb-4">Find Your Dream Property</h1>
+        <h1 className="text-2xl font-bold mb-2 sm:text-3xl sm:mb-4">Find Your Dream Property in Kuwait</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-          Browse our selection of properties for rent and sale. Use the filters to narrow down your search.
+          Browse our selection of properties for rent and sale across Kuwait. Use the filters to narrow down your search.
         </p>
       </div>
       
@@ -174,7 +174,7 @@ export default function PropertiesPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search by title, description, or location..."
+              placeholder="Search by title, area, or location in Kuwait..."
               className="w-full rounded-md border border-input bg-background pl-10 pr-4 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -226,7 +226,7 @@ export default function PropertiesPage() {
               </div>
               
               <div>
-                <label className="text-sm font-medium mb-1 block">Price Range</label>
+                <label className="text-sm font-medium mb-1 block">Price Range (KWD)</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
@@ -234,7 +234,7 @@ export default function PropertiesPage() {
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     value={priceRange[0] || ''}
                     onChange={(e) => setPriceRange([Number(e.target.value) || 0, priceRange[1]])}
-                    aria-label="Minimum price"
+                    aria-label="Minimum price in KWD"
                   />
                   <span>-</span>
                   <input
@@ -243,7 +243,7 @@ export default function PropertiesPage() {
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     value={priceRange[1] || ''}
                     onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value) || 1000000])}
-                    aria-label="Maximum price"
+                    aria-label="Maximum price in KWD"
                   />
                 </div>
               </div>
@@ -276,7 +276,7 @@ export default function PropertiesPage() {
       {isLoading ? (
         <div className="flex justify-center items-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="ml-2 text-muted-foreground">Loading properties...</span>
+          <span className="ml-2 text-muted-foreground">Loading properties in Kuwait...</span>
         </div>
       ) : error ? (
         <div className="bg-destructive/10 text-destructive p-4 rounded-md">
@@ -285,9 +285,9 @@ export default function PropertiesPage() {
       ) : filteredProperties.length === 0 ? (
         <div className="text-center py-12">
           <MapPin className="h-12 w-12 mx-auto text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-semibold">No properties found</h3>
+          <h3 className="mt-4 text-lg font-semibold">No properties found in Kuwait</h3>
           <p className="mt-2 text-muted-foreground">
-            Try adjusting your filters or search query.
+            Try adjusting your filters or search query to find properties in other areas of Kuwait.
           </p>
         </div>
       ) : (

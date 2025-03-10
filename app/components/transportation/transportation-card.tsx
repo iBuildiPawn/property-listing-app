@@ -24,9 +24,9 @@ const TransportationCard = memo(function TransportationCard({
   const getPriceRangeLabel = (priceRange: string) => {
     switch (priceRange) {
       case 'low':
-        return { label: 'Budget-friendly', icon: 1 };
+        return { label: 'Economical', icon: 1 };
       case 'medium':
-        return { label: 'Mid-range', icon: 2 };
+        return { label: 'Standard', icon: 2 };
       case 'high':
         return { label: 'Premium', icon: 3 };
       default:

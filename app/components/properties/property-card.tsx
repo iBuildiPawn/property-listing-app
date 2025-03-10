@@ -26,13 +26,13 @@ const PropertyCard = memo(function PropertyCard({
   const [imageError, setImageError] = useState(false);
   
   const formatPrice = (price: number) => {
-    return price >= 10000 
-      ? `$${(price / 1000).toFixed(0)}k` 
-      : `$${price.toLocaleString()}`;
+    return price >= 1000 
+      ? `${(price / 1000).toFixed(1)}K KWD` 
+      : `${price} KWD`;
   };
   
   const formatPriceWithCommas = (price: number) => {
-    return `$${price.toLocaleString()}`;
+    return `${price.toLocaleString()} KWD`;
   };
   
   const handleFavoriteClick = (e: React.MouseEvent) => {
@@ -131,7 +131,7 @@ const PropertyCard = memo(function PropertyCard({
               </div>
               <div className="flex items-center">
                 <Square className="mr-1 h-3 w-3 text-muted-foreground sm:h-4 sm:w-4" />
-                <span>{property.size} sqft</span>
+                <span>{property.size} m²</span>
               </div>
             </div>
           </div>

@@ -98,17 +98,17 @@ export default function TransportationPage() {
   
   const priceRanges = [
     { value: 'all', label: 'All Prices' },
-    { value: 'low', label: 'Budget-friendly' },
-    { value: 'medium', label: 'Mid-range' },
+    { value: 'low', label: 'Economical' },
+    { value: 'medium', label: 'Standard' },
     { value: 'high', label: 'Premium' },
   ];
 
   return (
     <div className="container mx-auto py-12 px-4">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-4">Transportation Services</h1>
+        <h1 className="text-3xl font-bold mb-4">Kuwait Transportation Services</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Find the perfect transportation service for your needs, from moving companies to car rentals.
+          Find the perfect transportation service for your needs in Kuwait, from moving companies to car rentals.
         </p>
       </div>
       
@@ -119,7 +119,7 @@ export default function TransportationPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search by name, description, or location..."
+              placeholder="Search by name, service, or location in Kuwait..."
               className="w-full rounded-md border border-input bg-background pl-10 pr-4 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -186,7 +186,7 @@ export default function TransportationPage() {
       {isLoading ? (
         <div className="flex justify-center items-center py-12">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-          <span className="ml-2 text-muted-foreground">Loading transportation services...</span>
+          <span className="ml-2 text-muted-foreground">Loading Kuwait transportation services...</span>
         </div>
       ) : error ? (
         <div className="bg-destructive/10 text-destructive p-4 rounded-md">
@@ -195,9 +195,9 @@ export default function TransportationPage() {
       ) : filteredServices.length === 0 ? (
         <div className="text-center py-12">
           <MapPin className="h-12 w-12 mx-auto text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-semibold">No transportation services found</h3>
+          <h3 className="mt-4 text-lg font-semibold">No transportation services found in Kuwait</h3>
           <p className="mt-2 text-muted-foreground">
-            Try adjusting your filters or search query.
+            Try adjusting your filters or search query to find services in other areas of Kuwait.
           </p>
         </div>
       ) : (

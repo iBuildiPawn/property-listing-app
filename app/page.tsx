@@ -5,10 +5,10 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-center font-mono text-sm flex flex-col">
         <h1 className="text-4xl font-bold mb-8 text-center">
-          Property Listing & Transportation App
+          Kuwait Property & Transportation App
         </h1>
         <p className="text-xl mb-8 text-center max-w-2xl">
-          Find your dream property and transportation services with our chatbot-driven application.
+          Find your dream property and transportation services in Kuwait with our chatbot-driven application.
         </p>
         <div className="flex gap-4">
           <Link
