@@ -1,0 +1,267 @@
+[
+  {
+    "id": "kw-prop-1",
+    "title": "Spacious 1 Bedroom Chalet for Sale in Mangaf",
+    "description": "Magnificent 1 bedroom chalet for sale in the prestigious area of Mangaf, Kuwait. This stunning property offers 1 bathrooms and a generous 321 square meters of living space. Features include Covered Parking, Elevator, Built-in Wardrobes, Equipped Kitchen, Balcony, Maid's Room, Sea View, Children's Play Area. An exceptional opportunity to own a premium property in one of Kuwait's most sought-after neighborhoods.",
+    "price": 454622,
+    "location": "Mangaf, Kuwait",
+    "property_type": "chalet",
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "size": 321,
+    "images": [
+      "/property_images/chalet_1_1.jpg",
+      "/property_images/chalet_1_2.jpg",
+      "/property_images/chalet_1_3.jpg"
+    ],
+    "amenities": [
+      "Covered Parking",
+      "Elevator",
+      "Built-in Wardrobes",
+      "Equipped Kitchen",
+      "Balcony",
+      "Maid's Room",
+      "Sea View",
+      "Children's Play Area"
+    ],
+    "created_at": "2025-03-10T16:50:07.104Z",
+    "updated_at": "2025-03-10T16:50:07.105Z",
+    "user_id": "admin"
+  },
+  {
+    "id": "kw-prop-2",
+    "title": "Spacious 1 Bedroom Townhouse for Sale in Mahboula",
+    "description": "Magnificent 1 bedroom townhouse for sale in the prestigious area of Mahboula, Kuwait. This stunning property offers 1 bathrooms and a generous 467 square meters of living space. Features include Balcony, Children's Play Area, Sea View, Garden, Built-in Wardrobes, Security System, Furnished. An exceptional opportunity to own a premium property in one of Kuwait's most sought-after neighborhoods.",
+    "price": 473948,
+    "location": "Mahboula, Kuwait",
+    "property_type": "townhouse",
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "size": 467,
+    "images": [
+      "/property_images/townhouse_2_1.jpg",
+      "/property_images/townhouse_2_2.jpg",
+      "/property_images/townhouse_2_3.jpg"
+    ],
+    "amenities": [
+      "Balcony",
+      "Children's Play Area",
+      "Sea View",
+      "Garden",
+      "Built-in Wardrobes",
+      "Security System",
+      "Furnished"
+    ],
+    "created_at": "2025-03-10T16:50:07.773Z",
+    "updated_at": "2025-03-10T16:50:07.773Z",
+    "user_id": "admin"
+  },
+  {
+    "id": "kw-prop-3",
+    "title": "Spacious 1 Bedroom Villa for Sale in Bayan",
+    "description": "Magnificent 1 bedroom villa for sale in the prestigious area of Bayan, Kuwait. This stunning property offers 2 bathrooms and a generous 297 square meters of living space. Features include Covered Parking, Satellite/Cable TV, Equipped Kitchen. An exceptional opportunity to own a premium property in one of Kuwait's most sought-after neighborhoods.",
+    "price": 476110,
+    "location": "Bayan, Kuwait",
+    "property_type": "villa",
+    "bedrooms": 1,
+    "bathrooms": 2,
+    "size": 297,
+    "images": [
+      "/property_images/villa_3_1.jpg",
+      "/property_images/villa_3_2.jpg",
+      "/images/villa3.jpg"
+    ],
+    "amenities": [
+      "Covered Parking",
+      "Satellite/Cable TV",
+      "Equipped Kitchen"
+    ],
+    "created_at": "2025-03-10T16:50:08.348Z",
+    "updated_at": "2025-03-10T16:50:08.348Z",
+    "user_id": "admin"
+  },
+  {
+    "id": "kw-prop-4",
+    "title": "Luxurious 2 Bedroom Penthouse for Rent in Bayan",
+    "description": "Beautiful 2 bedroom penthouse available for rent in Bayan, Kuwait. This modern penthouse features 1 bathrooms and spans 166 square meters of living space. Enjoy amenities including Sea View, Concierge Service, Avenues Mall Access, Co-op Nearby, Built-in Wardrobes. Perfect for families or professionals looking for a comfortable living space in a prime Kuwait location.",
+    "price": 1667,
+    "location": "Bayan, Kuwait",
+    "property_type": "penthouse",
+    "bedrooms": 2,
+    "bathrooms": 1,
+    "size": 166,
+    "images": [
+      "/property_images/penthouse_4_1.jpg",
+      "/property_images/penthouse_4_2.jpg",
+      "/images/penthouse3.jpg"
+    ],
+    "amenities": [
+      "Sea View",
+      "Concierge Service",
+      "Avenues Mall Access",
+      "Co-op Nearby",
+      "Built-in Wardrobes"
+    ],
+    "created_at": "2025-03-10T16:50:09.004Z",
+    "updated_at": "2025-03-10T16:50:09.004Z",
+    "user_id": "admin"
+  },
+  {
+    "id": "kw-prop-5",
+    "title": "Spacious 4 Bedroom Chalet for Sale in Kuwait City",
+    "description": "Magnificent 4 bedroom chalet for sale in the prestigious area of Kuwait City, Kuwait. This stunning property offers 1 bathrooms and a generous 231 square meters of living space. Features include Gym, Covered Parking, Central Air Conditioning, Furnished, Marble Flooring, Swimming Pool. An exceptional opportunity to own a premium property in one of Kuwait's most sought-after neighborhoods.",
+    "price": 425320,
+    "location": "Kuwait City, Kuwait",
+    "property_type": "chalet",
+    "bedrooms": 4,
+    "bathrooms": 1,
+    "size": 231,
+    "images": [
+      "/property_images/chalet_5_1.jpg",
+      "/property_images/chalet_5_2.jpg",
+      "/property_images/chalet_5_3.jpg"
+    ],
+    "amenities": [
+      "Gym",
+      "Covered Parking",
+      "Central Air Conditioning",
+      "Furnished",
+      "Marble Flooring",
+      "Swimming Pool"
+    ],
+    "created_at": "2025-03-10T16:50:09.766Z",
+    "updated_at": "2025-03-10T16:50:09.766Z",
+    "user_id": "admin"
+  },
+  {
+    "id": "kw-prop-6",
+    "title": "Spacious 1 Bedroom Chalet for Sale in Hawally",
+    "description": "Magnificent 1 bedroom chalet for sale in the prestigious area of Hawally, Kuwait. This stunning property offers 2 bathrooms and a generous 471 square meters of living space. Features include Swimming Pool, Children's Play Area, Co-op Nearby, Mosque Nearby, Sea View, Built-in Wardrobes. An exceptional opportunity to own a premium property in one of Kuwait's most sought-after neighborhoods.",
+    "price": 504150,
+    "location": "Hawally, Kuwait",
+    "property_type": "chalet",
+    "bedrooms": 1,
+    "bathrooms": 2,
+    "size": 471,
+    "images": [
+      "/property_images/chalet_6_1.jpg",
+      "/property_images/chalet_6_2.jpg",
+      "/property_images/chalet_6_3.jpg"
+    ],
+    "amenities": [
+      "Swimming Pool",
+      "Children's Play Area",
+      "Co-op Nearby",
+      "Mosque Nearby",
+      "Sea View",
+      "Built-in Wardrobes"
+    ],
+    "created_at": "2025-03-10T16:50:10.235Z",
+    "updated_at": "2025-03-10T16:50:10.235Z",
+    "user_id": "admin"
+  },
+  {
+    "id": "kw-prop-7",
+    "title": "Spacious 5 Bedroom Chalet for Sale in Salmiya",
+    "description": "Magnificent 5 bedroom chalet for sale in the prestigious area of Salmiya, Kuwait. This stunning property offers 3 bathrooms and a generous 296 square meters of living space. Features include Concierge Service, Security System, Maid's Room, Garden, Co-op Nearby. An exceptional opportunity to own a premium property in one of Kuwait's most sought-after neighborhoods.",
+    "price": 493155,
+    "location": "Salmiya, Kuwait",
+    "property_type": "chalet",
+    "bedrooms": 5,
+    "bathrooms": 3,
+    "size": 296,
+    "images": [
+      "/property_images/chalet_7_1.jpg",
+      "/property_images/chalet_7_2.jpg",
+      "/property_images/chalet_7_3.jpg"
+    ],
+    "amenities": [
+      "Concierge Service",
+      "Security System",
+      "Maid's Room",
+      "Garden",
+      "Co-op Nearby"
+    ],
+    "created_at": "2025-03-10T16:50:10.650Z",
+    "updated_at": "2025-03-10T16:50:10.650Z",
+    "user_id": "admin"
+  },
+  {
+    "id": "kw-prop-8",
+    "title": "Luxurious 3 Bedroom Penthouse for Rent in Fintas",
+    "description": "Beautiful 3 bedroom penthouse available for rent in Fintas, Kuwait. This modern penthouse features 3 bathrooms and spans 439 square meters of living space. Enjoy amenities including Gym, Built-in Wardrobes, Children's Play Area, Mosque Nearby, Maid's Room, Swimming Pool. Perfect for families or professionals looking for a comfortable living space in a prime Kuwait location.",
+    "price": 1945,
+    "location": "Fintas, Kuwait",
+    "property_type": "penthouse",
+    "bedrooms": 3,
+    "bathrooms": 3,
+    "size": 439,
+    "images": [
+      "/property_images/penthouse_8_1.jpg",
+      "/property_images/penthouse_8_2.jpg",
+      "/images/penthouse3.jpg"
+    ],
+    "amenities": [
+      "Gym",
+      "Built-in Wardrobes",
+      "Children's Play Area",
+      "Mosque Nearby",
+      "Maid's Room",
+      "Swimming Pool"
+    ],
+    "created_at": "2025-03-10T16:50:11.007Z",
+    "updated_at": "2025-03-10T16:50:11.007Z",
+    "user_id": "admin"
+  },
+  {
+    "id": "kw-prop-9",
+    "title": "Luxurious 3 Bedroom Penthouse for Rent in Mangaf",
+    "description": "Beautiful 3 bedroom penthouse available for rent in Mangaf, Kuwait. This modern penthouse features 3 bathrooms and spans 390 square meters of living space. Enjoy amenities including Built-in Wardrobes, Equipped Kitchen, Concierge Service, Sea View, Swimming Pool. Perfect for families or professionals looking for a comfortable living space in a prime Kuwait location.",
+    "price": 2108,
+    "location": "Mangaf, Kuwait",
+    "property_type": "penthouse",
+    "bedrooms": 3,
+    "bathrooms": 3,
+    "size": 390,
+    "images": [
+      "/property_images/penthouse_9_1.jpg",
+      "/property_images/penthouse_9_2.jpg",
+      "/images/penthouse3.jpg"
+    ],
+    "amenities": [
+      "Built-in Wardrobes",
+      "Equipped Kitchen",
+      "Concierge Service",
+      "Sea View",
+      "Swimming Pool"
+    ],
+    "created_at": "2025-03-10T16:50:11.532Z",
+    "updated_at": "2025-03-10T16:50:11.532Z",
+    "user_id": "admin"
+  },
+  {
+    "id": "kw-prop-10",
+    "title": "Spacious 4 Bedroom Duplex for Sale in Fintas",
+    "description": "Magnificent 4 bedroom duplex for sale in the prestigious area of Fintas, Kuwait. This stunning property offers 4 bathrooms and a generous 346 square meters of living space. Features include Maid's Room, Built-in Wardrobes, Equipped Kitchen, Gym. An exceptional opportunity to own a premium property in one of Kuwait's most sought-after neighborhoods.",
+    "price": 432501,
+    "location": "Fintas, Kuwait",
+    "property_type": "duplex",
+    "bedrooms": 4,
+    "bathrooms": 4,
+    "size": 346,
+    "images": [
+      "/property_images/duplex_10_1.jpg",
+      "/images/duplex2.jpg",
+      "/property_images/duplex_10_3.jpg"
+    ],
+    "amenities": [
+      "Maid's Room",
+      "Built-in Wardrobes",
+      "Equipped Kitchen",
+      "Gym"
+    ],
+    "created_at": "2025-03-10T16:50:12.471Z",
+    "updated_at": "2025-03-10T16:50:12.471Z",
+    "user_id": "admin"
+  }
+]
