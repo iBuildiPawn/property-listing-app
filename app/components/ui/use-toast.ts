@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type ToastProps = {
   title?: string;
@@ -6,24 +6,46 @@ type ToastProps = {
   variant?: "default" | "destructive";
 };
 
+// Create a simple global state for toasts
+let toasts: ToastProps[] = [];
+let listeners: ((toasts: ToastProps[]) => void)[] = [];
+
+function notifyListeners() {
+  listeners.forEach(listener => listener(toasts));
+}
+
+export function toast(props: ToastProps) {
+  toasts = [...toasts, props];
+  notifyListeners();
+  
+  // Auto dismiss after 5 seconds
+  setTimeout(() => {
+    toasts = toasts.filter(t => t !== props);
+    notifyListeners();
+  }, 5000);
+}
+
 export function useToast() {
-  const [toasts, setToasts] = useState<ToastProps[]>([]);
-
-  const toast = (props: ToastProps) => {
-    setToasts((prev) => [...prev, props]);
+  const [state, setState] = useState<ToastProps[]>(toasts);
+  
+  useEffect(() => {
+    const listener = (newToasts: ToastProps[]) => {
+      setState([...newToasts]);
+    };
     
-    // Auto dismiss after 5 seconds
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t !== props));
-    }, 5000);
-  };
-
+    listeners.push(listener);
+    return () => {
+      listeners = listeners.filter(l => l !== listener);
+    };
+  }, []);
+  
   const dismiss = () => {
-    setToasts([]);
+    toasts = [];
+    notifyListeners();
   };
 
   return {
-    toasts,
+    toasts: state,
     toast,
     dismiss,
   };

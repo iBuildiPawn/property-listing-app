@@ -6,6 +6,7 @@ import Navbar from '@/app/components/layout/navbar';
 import Footer from '@/app/components/layout/footer';
 import { AuthProvider } from '@/app/contexts/auth-context';
 import { PageTransition } from '@/app/components/animations';
+import { Toaster } from '@/app/components/ui/toast';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
                 </PageTransition>
               </main>
               <Footer />
+              <Toaster />
             </div>
           </AuthProvider>
         </ThemeProvider>
