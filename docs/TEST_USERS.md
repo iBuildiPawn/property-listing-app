@@ -30,7 +30,7 @@ The application includes test users for each role:
 
 ## Creating Test Users
 
-There are two ways to create these test users:
+There are several ways to create these test users:
 
 ### Method 1: Using the JavaScript Script (Recommended)
 
@@ -51,9 +51,31 @@ There are two ways to create these test users:
 
 1. Log in to your Supabase dashboard.
 2. Navigate to the SQL Editor.
-3. Copy the contents of `db/migrations/create_test_users.sql`.
+3. Choose one of the following SQL scripts:
+   - `db/migrations/create_test_users.sql` - Uses direct table access (may require elevated privileges)
+   - `db/migrations/create_test_users_alt.sql` - Uses Supabase's auth API (recommended)
 4. Paste the SQL into the editor and run it.
 5. Check the logs to confirm the users were created successfully.
+
+### Method 3: Using the Supabase Dashboard
+
+If you encounter issues with the automated methods, you can manually create users:
+
+1. Log in to your Supabase dashboard.
+2. Navigate to Authentication > Users.
+3. Click "Add User" and fill in the details for each test user.
+4. After creating the users, navigate to the SQL Editor.
+5. Run the following SQL to set up the profiles and roles:
+
+```sql
+-- For each user you created, run this SQL with the appropriate values
+INSERT INTO profiles (id, full_name, email, user_type, is_admin)
+VALUES 
+  ('user-id-from-auth-users', 'Test Renter', 'test.renter@example.com', 'renter', false),
+  ('user-id-from-auth-users', 'Test Buyer', 'test.buyer@example.com', 'buyer', false),
+  ('user-id-from-auth-users', 'Test Owner', 'test.owner@example.com', 'owner', false),
+  ('user-id-from-auth-users', 'Test Admin', 'test.admin@example.com', 'owner', true);
+```
 
 ## Using Test Users
 
@@ -73,9 +95,21 @@ There are two ways to create these test users:
 
 If you encounter issues creating or using test users:
 
-1. **Database Constraints**: Make sure the user_type values match the allowed values in the database ('renter', 'buyer', 'owner').
-2. **Authentication Issues**: Check that the auth.users table entries match the profiles table entries.
-3. **Permission Issues**: Verify that the Row Level Security (RLS) policies are correctly set up.
+1. **Permission Issues**: 
+   - The `create_test_users.sql` script requires direct access to the `auth.users` table, which may be restricted.
+   - Try using the `create_test_users_alt.sql` script which uses Supabase's auth API.
+   - If both fail, use Method 3 (manual creation).
+
+2. **Database Constraints**: 
+   - Make sure the user_type values match the allowed values in the database ('renter', 'buyer', 'owner').
+   - Check that the profiles table has the correct constraints.
+
+3. **Authentication Issues**: 
+   - Verify that users exist in both auth.users and profiles tables.
+   - Check that the IDs match between the tables.
+
+4. **RLS Policies**: 
+   - Ensure Row Level Security policies are correctly set up for each role.
 
 ## Cleaning Up Test Users
 

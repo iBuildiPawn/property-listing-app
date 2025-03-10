@@ -12,8 +12,12 @@ CREATE OR REPLACE FUNCTION create_test_user(
 DECLARE
   v_user_id UUID;
 BEGIN
+  -- Generate a UUID for the user
+  v_user_id := gen_random_uuid();
+
   -- Insert user into auth.users table
   INSERT INTO auth.users (
+    id,
     email,
     encrypted_password,
     email_confirmed_at,
@@ -23,6 +27,7 @@ BEGIN
     created_at,
     updated_at
   ) VALUES (
+    v_user_id,
     p_email,
     crypt(p_password, gen_salt('bf')),
     NOW(),
@@ -31,7 +36,7 @@ BEGIN
     json_build_object('full_name', p_full_name, 'user_type', p_user_type),
     NOW(),
     NOW()
-  ) RETURNING id INTO v_user_id;
+  );
 
   -- Insert user profile
   INSERT INTO public.profiles (

@@ -23,18 +23,32 @@ async function createTestUsers() {
   try {
     console.log('Creating test users for each role...');
     
-    // Read the SQL file
-    const sqlFilePath = path.join(__dirname, '../db/migrations/create_test_users.sql');
-    const sqlContent = fs.readFileSync(sqlFilePath, 'utf8');
+    // Try the alternative method first (using Supabase's auth API)
+    const altSqlFilePath = path.join(__dirname, '../db/migrations/create_test_users_alt.sql');
+    const altSqlContent = fs.readFileSync(altSqlFilePath, 'utf8');
     
-    // Execute the SQL
-    const { error } = await supabase.rpc('exec_sql', { sql: sqlContent });
+    console.log('Attempting to create users using Supabase auth API...');
+    const { error: altError } = await supabase.rpc('exec_sql', { sql: altSqlContent });
     
-    if (error) {
-      throw error;
+    if (!altError) {
+      console.log('✅ Test users created successfully using Supabase auth API!');
+    } else {
+      console.log('⚠️ Could not create users with Supabase auth API method:', altError.message);
+      console.log('Trying direct table access method...');
+      
+      // If the alternative method fails, try the direct table access method
+      const sqlFilePath = path.join(__dirname, '../db/migrations/create_test_users.sql');
+      const sqlContent = fs.readFileSync(sqlFilePath, 'utf8');
+      
+      const { error } = await supabase.rpc('exec_sql', { sql: sqlContent });
+      
+      if (error) {
+        throw error;
+      } else {
+        console.log('✅ Test users created successfully using direct table access!');
+      }
     }
     
-    console.log('✅ Test users created successfully!');
     console.log('\nTest User Credentials:');
     console.log('------------------------');
     console.log('Renter: test.renter@example.com / password123');
@@ -48,8 +62,22 @@ async function createTestUsers() {
     
     if (error.message.includes('function exec_sql() does not exist')) {
       console.error('\nThe exec_sql function is not available in your Supabase project.');
-      console.error('You may need to run this SQL directly in the Supabase SQL editor.');
-      console.error(`SQL file path: ${path.join(__dirname, '../db/migrations/create_test_users.sql')}`);
+      console.error('You need to create this function or run the SQL directly in the Supabase SQL editor.');
+      console.error('\nTo create the exec_sql function, run this SQL in the Supabase SQL editor:');
+      console.error(`
+CREATE OR REPLACE FUNCTION exec_sql(sql text)
+RETURNS void AS $$
+BEGIN
+  EXECUTE sql;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+      `);
+      console.error('\nAlternatively, you can run the SQL files directly in the Supabase SQL editor:');
+      console.error(`- ${path.join(__dirname, '../db/migrations/create_test_users_alt.sql')}`);
+      console.error(`- ${path.join(__dirname, '../db/migrations/create_test_users.sql')}`);
+    } else if (error.message.includes('permission denied')) {
+      console.error('\nPermission denied. Your service role key might not have sufficient privileges.');
+      console.error('Try running the SQL directly in the Supabase SQL editor or use the manual method described in docs/TEST_USERS.md');
     }
   }
 }
