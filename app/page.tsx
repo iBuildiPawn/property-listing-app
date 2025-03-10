@@ -7,53 +7,65 @@ import {
   StaggerContainer, 
   AnimatedButton 
 } from '@/app/components/animations';
+import FeaturedPropertiesSection from '@/app/components/properties/featured-properties-section';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 md:p-24">
-      <StaggerContainer className="z-10 max-w-5xl w-full items-center justify-center font-mono text-sm flex flex-col">
-        <MotionWrapper variant="fade" delay={0.2}>
-          <h1 className="text-4xl font-bold mb-8 text-center">
-            Kuwait Property & Transportation App
-          </h1>
-        </MotionWrapper>
-        
-        <MotionWrapper variant="slide" direction="up" delay={0.4}>
-          <p className="text-xl mb-8 text-center max-w-2xl">
-            Find your dream property and transportation services in Kuwait with our chatbot-driven application.
-          </p>
-        </MotionWrapper>
-        
-        <MotionWrapper variant="scale" delay={0.6}>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <AnimatedButton
-              variant="default"
-              size="lg"
-              icon={<ArrowRight className="h-4 w-4" />}
-              iconPosition="right"
-              onClick={() => {}}
-            >
-              <Link href="/routes/auth/login">
-                Login
-              </Link>
-            </AnimatedButton>
-            
-            <AnimatedButton
-              variant="outline"
-              size="lg"
-              icon={<ArrowRight className="h-4 w-4" />}
-              iconPosition="right"
-              onClick={() => {}}
-            >
-              <Link href="/routes/auth/register">
-                Register
-              </Link>
-            </AnimatedButton>
-          </div>
-        </MotionWrapper>
-        
-        <MotionWrapper variant="fade" delay={0.8} className="mt-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+    <main className="flex min-h-screen flex-col items-center">
+      {/* Hero Section */}
+      <section className="w-full bg-gradient-to-b from-background to-muted/30 py-16 md:py-24">
+        <StaggerContainer className="container mx-auto px-6 max-w-5xl w-full items-center justify-center font-mono text-sm flex flex-col">
+          <MotionWrapper variant="fade" delay={0.2}>
+            <h1 className="text-4xl font-bold mb-8 text-center">
+              Kuwait Property & Transportation App
+            </h1>
+          </MotionWrapper>
+          
+          <MotionWrapper variant="slide" direction="up" delay={0.4}>
+            <p className="text-xl mb-8 text-center max-w-2xl">
+              Find your dream property and transportation services in Kuwait with our chatbot-driven application.
+            </p>
+          </MotionWrapper>
+          
+          <MotionWrapper variant="scale" delay={0.6}>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <AnimatedButton
+                variant="default"
+                size="lg"
+                icon={<ArrowRight className="h-4 w-4" />}
+                iconPosition="right"
+                onClick={() => {}}
+              >
+                <Link href="/routes/auth/login">
+                  Login
+                </Link>
+              </AnimatedButton>
+              
+              <AnimatedButton
+                variant="outline"
+                size="lg"
+                icon={<ArrowRight className="h-4 w-4" />}
+                iconPosition="right"
+                onClick={() => {}}
+              >
+                <Link href="/routes/auth/register">
+                  Register
+                </Link>
+              </AnimatedButton>
+            </div>
+          </MotionWrapper>
+        </StaggerContainer>
+      </section>
+      
+      {/* Featured Properties Section */}
+      <FeaturedPropertiesSection />
+      
+      {/* Services Section */}
+      <section className="w-full bg-muted/30 py-16">
+        <MotionWrapper variant="fade" delay={0.8} className="container mx-auto px-6">
+          <h2 className="text-2xl font-bold mb-8 text-center">Our Services</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto">
             <div className="bg-card rounded-lg border border-border p-6 hover:shadow-md transition-shadow">
               <h2 className="text-xl font-semibold mb-2">Find Properties</h2>
               <p className="text-muted-foreground mb-4">
@@ -83,7 +95,7 @@ export default function Home() {
             </div>
           </div>
         </MotionWrapper>
-      </StaggerContainer>
+      </section>
     </main>
   );
 } 
