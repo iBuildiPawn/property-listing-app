@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/app/components/theme-provider';
 import Navbar from '@/app/components/layout/navbar';
 import Footer from '@/app/components/layout/footer';
 import { AuthProvider } from '@/app/contexts/auth-context';
+import { PageTransition } from '@/app/components/animations';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,7 +31,11 @@ export default function RootLayout({
           <AuthProvider>
             <div className="flex flex-col min-h-screen">
               <Navbar />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1">
+                <PageTransition>
+                  {children}
+                </PageTransition>
+              </main>
               <Footer />
             </div>
           </AuthProvider>

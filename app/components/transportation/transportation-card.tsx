@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Database } from '@/app/types/database.types';
@@ -6,6 +8,7 @@ import { useState, memo } from 'react';
 import { generateBlurPlaceholder, getResponsiveImageSizes } from '@/app/utils/image-optimization';
 import { getValidImageUrl, getPlaceholderImage } from '@/app/utils/image-utils';
 import OptimizedImage from '@/app/components/ui/optimized-image';
+import { AnimatedCard } from '@/app/components/animations';
 
 type TransportationService = Database['public']['Tables']['transportation_services']['Row'];
 
@@ -58,79 +61,85 @@ const TransportationCard = memo(function TransportationCard({
   return (
     <Link 
       href={`/routes/public/transportation/${service.id}`}
-      className={`group block transition-transform duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${className}`}
+      className={`group block ${className}`}
     >
-      <div 
-        className="relative overflow-hidden rounded-lg border border-border bg-card transition-all hover:shadow-md"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+      <AnimatedCard
+        hoverEffect="scale"
+        index={index}
+        className="h-full"
       >
-        {/* Image */}
-        <div className="relative h-48 w-full overflow-hidden sm:h-52 md:h-48 lg:h-52">
-          <OptimizedImage
-            src={service.images[0]}
-            alt={service.name}
-            fill
-            sizes={getResponsiveImageSizes()}
-            className={`object-cover transition-transform duration-300 ${
-              isHovered ? 'scale-110' : 'scale-100'
-            }`}
-            priority={shouldPrioritize}
-            fallbackType="transportation"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          
-          {/* Service type badge */}
-          <div className="absolute top-3 left-3 rounded-md bg-primary px-2 py-1 text-xs font-medium text-primary-foreground">
-            {getServiceTypeLabel(service.service_type)}
-          </div>
-          
-          {/* Price range badge */}
-          <div className="absolute bottom-3 right-3 rounded-md bg-background/80 px-2 py-1 text-xs font-medium backdrop-blur-sm flex items-center">
-            <span className="mr-1 hidden sm:inline">{priceInfo.label}</span>
-            <div className="flex items-center">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <CircleDollarSign 
-                  key={i} 
-                  className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${i < priceInfo.icon ? 'text-primary' : 'text-muted-foreground/30'}`} 
-                  aria-hidden={i >= priceInfo.icon}
-                />
-              ))}
-              <span className="ml-1 text-xs">KWD</span>
-            </div>
-          </div>
-        </div>
-        
-        {/* Content */}
-        <div className="p-3 sm:p-4">
-          <h3 className="line-clamp-1 text-base font-semibold group-hover:text-primary sm:text-lg">
-            {service.name}
-          </h3>
-          
-          <div className="mt-1 flex items-center text-muted-foreground">
-            <MapPin className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-            <span className="line-clamp-1 text-xs sm:text-sm">{service.location}</span>
-          </div>
-          
-          <p className="mt-2 line-clamp-2 text-xs text-muted-foreground sm:text-sm">
-            {service.description}
-          </p>
-          
-          <div className="mt-3 flex flex-col space-y-1.5 border-t border-border pt-3 text-xs sm:mt-4 sm:pt-4 sm:text-sm">
-            <div className="flex items-center">
-              <Phone className="mr-1.5 h-3 w-3 text-muted-foreground sm:h-4 sm:w-4" />
-              <span className="line-clamp-1">{service.contact_info}</span>
+        <div 
+          className="relative h-full"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {/* Image */}
+          <div className="relative h-48 w-full overflow-hidden sm:h-52 md:h-48 lg:h-52">
+            <OptimizedImage
+              src={service.images[0]}
+              alt={service.name}
+              fill
+              sizes={getResponsiveImageSizes()}
+              className={`object-cover transition-transform duration-300 ${
+                isHovered ? 'scale-110' : 'scale-100'
+              }`}
+              priority={shouldPrioritize}
+              fallbackType="transportation"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            
+            {/* Service type badge */}
+            <div className="absolute top-3 left-3 rounded-md bg-primary px-2 py-1 text-xs font-medium text-primary-foreground">
+              {getServiceTypeLabel(service.service_type)}
             </div>
             
-            {service.website && (
+            {/* Price range badge */}
+            <div className="absolute bottom-3 right-3 rounded-md bg-background/80 px-2 py-1 text-xs font-medium backdrop-blur-sm flex items-center">
+              <span className="mr-1 hidden sm:inline">{priceInfo.label}</span>
               <div className="flex items-center">
-                <Globe className="mr-1.5 h-3 w-3 text-muted-foreground sm:h-4 sm:w-4" />
-                <span className="line-clamp-1 text-primary">{service.website}</span>
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <CircleDollarSign 
+                    key={i} 
+                    className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${i < priceInfo.icon ? 'text-primary' : 'text-muted-foreground/30'}`} 
+                    aria-hidden={i >= priceInfo.icon}
+                  />
+                ))}
+                <span className="ml-1 text-xs">KWD</span>
               </div>
-            )}
+            </div>
+          </div>
+          
+          {/* Content */}
+          <div className="p-3 sm:p-4">
+            <h3 className="line-clamp-1 text-base font-semibold group-hover:text-primary sm:text-lg">
+              {service.name}
+            </h3>
+            
+            <div className="mt-1 flex items-center text-muted-foreground">
+              <MapPin className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="line-clamp-1 text-xs sm:text-sm">{service.location}</span>
+            </div>
+            
+            <p className="mt-2 line-clamp-2 text-xs text-muted-foreground sm:text-sm">
+              {service.description}
+            </p>
+            
+            <div className="mt-3 flex flex-col space-y-1.5 border-t border-border pt-3 text-xs sm:mt-4 sm:pt-4 sm:text-sm">
+              <div className="flex items-center">
+                <Phone className="mr-1.5 h-3 w-3 text-muted-foreground sm:h-4 sm:w-4" />
+                <span className="line-clamp-1">{service.contact_info}</span>
+              </div>
+              
+              {service.website && (
+                <div className="flex items-center">
+                  <Globe className="mr-1.5 h-3 w-3 text-muted-foreground sm:h-4 sm:w-4" />
+                  <span className="line-clamp-1 text-primary">{service.website}</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </AnimatedCard>
     </Link>
   );
 });

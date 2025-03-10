@@ -16,6 +16,11 @@ import {
   Loader2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { 
+  MotionWrapper, 
+  StaggerContainer, 
+  AnimatedButton 
+} from '@/app/components/animations';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 
@@ -159,160 +164,147 @@ export default function PropertiesPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:py-12">
-      <div className="mb-6 text-center sm:mb-8">
-        <h1 className="text-2xl font-bold mb-2 sm:text-3xl sm:mb-4">Find Your Dream Property in Kuwait</h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-          Browse our selection of properties for rent and sale across Kuwait. Use the filters to narrow down your search.
+    <div className="container mx-auto py-8 px-4">
+      <MotionWrapper variant="fade" className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Kuwait Properties</h1>
+        <p className="text-muted-foreground">
+          Find your dream property in Kuwait with our comprehensive listings.
         </p>
-      </div>
+      </MotionWrapper>
       
-      {/* Search and Filters */}
-      <div className="mb-6 sm:mb-8">
-        <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+      <MotionWrapper variant="slide" direction="up" delay={0.1} className="mb-8">
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Search input */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search by title, area, or location in Kuwait..."
-              className="w-full rounded-md border border-input bg-background pl-10 pr-4 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              placeholder="Search properties..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label="Search properties"
+              className="w-full rounded-md border border-input bg-background pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           
+          {/* Filter button */}
           <button
             onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className="flex items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-muted/50 md:w-auto"
-            aria-expanded={isFilterOpen}
-            aria-controls="filter-panel"
+            className="flex items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-accent"
           >
             <Filter className="h-4 w-4" />
             <span>Filters</span>
             <ChevronDown className={`h-4 w-4 transition-transform ${isFilterOpen ? 'rotate-180' : ''}`} />
           </button>
         </div>
-        
-        {isFilterOpen && (
-          <motion.div 
-            id="filter-panel"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="mt-4 rounded-md border border-border bg-card p-4 overflow-hidden"
-          >
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-              <div>
-                <label className="text-sm font-medium mb-1 block">Property Type</label>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  {propertyTypes.map((type) => (
-                    <button
-                      key={type.value}
-                      onClick={() => setPropertyType(type.value)}
-                      className={`flex items-center justify-center gap-1 rounded-md px-2 py-2 text-xs font-medium ${
-                        propertyType === type.value
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted/50 hover:bg-muted'
-                      }`}
-                      aria-pressed={propertyType === type.value}
-                    >
-                      <type.icon className="h-3 w-3" />
-                      <span>{type.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-1 block">Price Range (KWD)</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    placeholder="Min"
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    value={priceRange[0] || ''}
-                    onChange={(e) => setPriceRange([Number(e.target.value) || 0, priceRange[1]])}
-                    aria-label="Minimum price in KWD"
-                  />
-                  <span>-</span>
-                  <input
-                    type="number"
-                    placeholder="Max"
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    value={priceRange[1] || ''}
-                    onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value) || 1000000])}
-                    aria-label="Maximum price in KWD"
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-1 block">Bedrooms</label>
-                <div className="flex gap-2">
-                  {bedroomOptions.map((option) => (
-                    <button
-                      key={option.label}
-                      onClick={() => setBedroomsMin(option.value)}
-                      className={`flex-1 rounded-md px-3 py-2 text-xs font-medium ${
-                        bedroomsMin === option.value
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted/50 hover:bg-muted'
-                      }`}
-                      aria-pressed={bedroomsMin === option.value}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </div>
+      </MotionWrapper>
       
-      {/* Results */}
+      {/* Filter panel */}
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ 
+          height: isFilterOpen ? 'auto' : 0,
+          opacity: isFilterOpen ? 1 : 0
+        }}
+        transition={{ duration: 0.3 }}
+        className="overflow-hidden mb-8"
+      >
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+          <div>
+            <label className="text-sm font-medium mb-1 block">Property Type</label>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {propertyTypes.map((type) => (
+                <button
+                  key={type.value}
+                  onClick={() => setPropertyType(type.value)}
+                  className={`flex items-center justify-center gap-1 rounded-md px-2 py-2 text-xs font-medium ${
+                    propertyType === type.value
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted/50 hover:bg-muted'
+                  }`}
+                  aria-pressed={propertyType === type.value}
+                >
+                  <type.icon className="h-3 w-3" />
+                  <span>{type.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <label className="text-sm font-medium mb-1 block">Price Range (KWD)</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                placeholder="Min"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                value={priceRange[0] || ''}
+                onChange={(e) => setPriceRange([Number(e.target.value) || 0, priceRange[1]])}
+                aria-label="Minimum price in KWD"
+              />
+              <span>-</span>
+              <input
+                type="number"
+                placeholder="Max"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                value={priceRange[1] || ''}
+                onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value) || 1000000])}
+                aria-label="Maximum price in KWD"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="text-sm font-medium mb-1 block">Bedrooms</label>
+            <div className="flex gap-2">
+              {bedroomOptions.map((option) => (
+                <button
+                  key={option.label}
+                  onClick={() => setBedroomsMin(option.value)}
+                  className={`flex-1 rounded-md px-3 py-2 text-xs font-medium ${
+                    bedroomsMin === option.value
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted/50 hover:bg-muted'
+                  }`}
+                  aria-pressed={bedroomsMin === option.value}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+      
+      {/* Properties grid */}
       {isLoading ? (
         <div className="flex justify-center items-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="ml-2 text-muted-foreground">Loading properties in Kuwait...</span>
         </div>
       ) : error ? (
         <div className="bg-destructive/10 text-destructive p-4 rounded-md">
           {error}
         </div>
       ) : filteredProperties.length === 0 ? (
-        <div className="text-center py-12">
-          <MapPin className="h-12 w-12 mx-auto text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-semibold">No properties found in Kuwait</h3>
-          <p className="mt-2 text-muted-foreground">
-            Try adjusting your filters or search query to find properties in other areas of Kuwait.
-          </p>
-        </div>
+        <MotionWrapper variant="fade" className="text-center py-12">
+          <div className="bg-muted p-6 rounded-lg">
+            <h3 className="text-xl font-semibold mb-2">No properties found</h3>
+            <p className="text-muted-foreground">
+              Try adjusting your filters or search query to find properties.
+            </p>
+          </div>
+        </MotionWrapper>
       ) : (
-        <div>
-          <p className="mb-4 text-muted-foreground text-sm">
-            Showing {filteredProperties.length} {filteredProperties.length === 1 ? 'property' : 'properties'}
-          </p>
-          
-          <motion.div 
-            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {filteredProperties.map((property) => (
-              <motion.div key={property.id} variants={itemVariants}>
-                <PropertyCard
-                  property={property}
-                  isFavorite={favorites.includes(property.id)}
-                  onToggleFavorite={user ? toggleFavorite : undefined}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
+        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredProperties.map((property, index) => (
+            <PropertyCard
+              key={property.id}
+              property={property}
+              isFavorite={favorites.includes(property.id)}
+              onToggleFavorite={user ? toggleFavorite : undefined}
+              index={index}
+            />
+          ))}
+        </StaggerContainer>
       )}
     </div>
   );
