@@ -10,11 +10,17 @@ import {
   Phone, 
   Globe, 
   ArrowLeft,
-  DollarSign,
+  CircleDollarSign,
   Share2,
   Clock,
-  Info
+  Info,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn
 } from 'lucide-react';
+import { getValidImageUrl, getPlaceholderImage } from '@/app/utils/image-utils';
+import OptimizedImage from '@/app/components/ui/optimized-image';
 
 type TransportationService = Database['public']['Tables']['transportation_services']['Row'];
 
@@ -23,6 +29,7 @@ export default function TransportationDetailPage({ params }: { params: { id: str
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
   useEffect(() => {
     fetchService();
@@ -92,6 +99,56 @@ export default function TransportationDetailPage({ params }: { params: { id: str
     }
   };
   
+  const openPreview = () => {
+    setIsPreviewOpen(true);
+    // Prevent scrolling when modal is open
+    document.body.style.overflow = 'hidden';
+  };
+  
+  const closePreview = () => {
+    setIsPreviewOpen(false);
+    // Restore scrolling when modal is closed
+    document.body.style.overflow = 'auto';
+  };
+  
+  const goToNextImage = () => {
+    if (service && service.images.length > 0) {
+      setActiveImageIndex((prevIndex) => 
+        prevIndex === service.images.length - 1 ? 0 : prevIndex + 1
+      );
+    }
+  };
+  
+  const goToPrevImage = () => {
+    if (service && service.images.length > 0) {
+      setActiveImageIndex((prevIndex) => 
+        prevIndex === 0 ? service.images.length - 1 : prevIndex - 1
+      );
+    }
+  };
+  
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isPreviewOpen) return;
+      
+      switch (e.key) {
+        case 'Escape':
+          closePreview();
+          break;
+        case 'ArrowRight':
+          goToNextImage();
+          break;
+        case 'ArrowLeft':
+          goToPrevImage();
+          break;
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isPreviewOpen, service]);
+  
   if (isLoading) {
     return (
       <div className="container mx-auto py-12 px-4 flex justify-center items-center min-h-[60vh]">
@@ -137,13 +194,22 @@ export default function TransportationDetailPage({ params }: { params: { id: str
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left column - Images */}
         <div className="lg:col-span-2">
-          <div className="relative rounded-lg overflow-hidden aspect-[16/9]">
-            <Image
-              src={service.images[activeImageIndex] || '/placeholder-transportation.jpg'}
+          <div 
+            className="relative rounded-lg overflow-hidden aspect-[16/9] cursor-pointer group"
+            onClick={openPreview}
+          >
+            <OptimizedImage
+              src={service.images[activeImageIndex]}
               alt={service.name}
               fill
               className="object-cover"
+              fallbackType="transportation"
             />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <div className="bg-black/50 rounded-full p-2">
+                <ZoomIn className="h-6 w-6 text-white" />
+              </div>
+            </div>
           </div>
           
           {service.images.length > 1 && (
@@ -151,16 +217,20 @@ export default function TransportationDetailPage({ params }: { params: { id: str
               {service.images.map((image, index) => (
                 <button
                   key={index}
-                  onClick={() => setActiveImageIndex(index)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveImageIndex(index);
+                  }}
                   className={`relative aspect-square rounded-md overflow-hidden border-2 ${
                     activeImageIndex === index ? 'border-primary' : 'border-transparent'
                   }`}
                 >
-                  <Image
+                  <OptimizedImage
                     src={image}
                     alt={`${service.name} - Image ${index + 1}`}
                     fill
                     className="object-cover"
+                    fallbackType="transportation"
                   />
                 </button>
               ))}
@@ -199,11 +269,12 @@ export default function TransportationDetailPage({ params }: { params: { id: str
                   <span className="mr-2 text-sm">{priceInfo.label}</span>
                   <div className="flex">
                     {Array.from({ length: 3 }).map((_, i) => (
-                      <DollarSign 
+                      <CircleDollarSign 
                         key={i} 
                         className={`h-4 w-4 ${i < priceInfo.icon ? 'text-primary' : 'text-muted-foreground/30'}`} 
                       />
                     ))}
+                    <span className="ml-1 text-xs text-muted-foreground">KWD</span>
                   </div>
                 </div>
               </div>
@@ -254,6 +325,93 @@ export default function TransportationDetailPage({ params }: { params: { id: str
           </div>
         </div>
       </div>
+      
+      {/* Image Preview Modal */}
+      {isPreviewOpen && (
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center">
+          <div className="relative w-full h-full flex flex-col">
+            {/* Close button */}
+            <button 
+              onClick={closePreview}
+              className="absolute top-4 right-4 z-10 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
+              aria-label="Close preview"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            
+            {/* Image counter */}
+            <div className="absolute top-4 left-4 z-10 bg-black/50 rounded-md px-3 py-1 text-white text-sm">
+              {activeImageIndex + 1} / {service.images.length}
+            </div>
+            
+            {/* Main image container */}
+            <div className="flex-1 flex items-center justify-center p-4 sm:p-10">
+              <div className="relative w-full h-full max-w-5xl max-h-[80vh] mx-auto">
+                <OptimizedImage
+                  src={service.images[activeImageIndex]}
+                  alt={service.name}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                  priority
+                  fallbackType="transportation"
+                />
+              </div>
+            </div>
+            
+            {/* Navigation buttons */}
+            {service.images.length > 1 && (
+              <>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToPrevImage();
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToNextImage();
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </>
+            )}
+            
+            {/* Thumbnail navigation */}
+            {service.images.length > 1 && (
+              <div className="p-4 flex justify-center">
+                <div className="flex space-x-2 overflow-x-auto max-w-full pb-2">
+                  {service.images.map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setActiveImageIndex(index)}
+                      className={`relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden border-2 ${
+                        activeImageIndex === index ? 'border-primary' : 'border-transparent'
+                      }`}
+                    >
+                      <OptimizedImage
+                        src={image}
+                        alt={`Thumbnail ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        fallbackType="transportation"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       
       {/* Description */}
       <div className="mt-8">

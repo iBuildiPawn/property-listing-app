@@ -3,7 +3,9 @@ import Link from 'next/link';
 import { Database } from '@/app/types/database.types';
 import { Heart, BedDouble, Bath, Square, MapPin } from 'lucide-react';
 import { useState, memo } from 'react';
-import { generateBlurPlaceholder, getResponsiveImageSizes, getPlaceholderImage } from '@/app/utils/image-optimization';
+import { generateBlurPlaceholder, getResponsiveImageSizes } from '@/app/utils/image-optimization';
+import { getValidImageUrl, getPlaceholderImage } from '@/app/utils/image-utils';
+import OptimizedImage from '@/app/components/ui/optimized-image';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 
@@ -23,7 +25,6 @@ const PropertyCard = memo(function PropertyCard({
   index = 0
 }: PropertyCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [imageError, setImageError] = useState(false);
   
   const formatPrice = (price: number) => {
     return price >= 1000 
@@ -43,10 +44,6 @@ const PropertyCard = memo(function PropertyCard({
     }
   };
 
-  const imageSrc = imageError || !property.images[0] 
-    ? getPlaceholderImage('property')
-    : property.images[0];
-
   // Only load the first few cards with priority
   const shouldPrioritize = index < 4;
 
@@ -62,8 +59,8 @@ const PropertyCard = memo(function PropertyCard({
       >
         {/* Image */}
         <div className="relative h-48 w-full overflow-hidden sm:h-52 md:h-48 lg:h-52">
-          <Image
-            src={imageSrc}
+          <OptimizedImage
+            src={property.images[0]}
             alt={property.title}
             fill
             sizes={getResponsiveImageSizes()}
@@ -71,10 +68,7 @@ const PropertyCard = memo(function PropertyCard({
               isHovered ? 'scale-110' : 'scale-100'
             }`}
             priority={shouldPrioritize}
-            loading={shouldPrioritize ? 'eager' : 'lazy'}
-            onError={() => setImageError(true)}
-            blurDataURL={generateBlurPlaceholder()}
-            placeholder="blur"
+            fallbackType="property"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           

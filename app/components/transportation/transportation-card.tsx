@@ -1,9 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Database } from '@/app/types/database.types';
-import { MapPin, Phone, Globe, DollarSign } from 'lucide-react';
+import { MapPin, Phone, Globe, CircleDollarSign } from 'lucide-react';
 import { useState, memo } from 'react';
-import { generateBlurPlaceholder, getResponsiveImageSizes, getPlaceholderImage } from '@/app/utils/image-optimization';
+import { generateBlurPlaceholder, getResponsiveImageSizes } from '@/app/utils/image-optimization';
+import { getValidImageUrl, getPlaceholderImage } from '@/app/utils/image-utils';
+import OptimizedImage from '@/app/components/ui/optimized-image';
 
 type TransportationService = Database['public']['Tables']['transportation_services']['Row'];
 
@@ -19,7 +21,6 @@ const TransportationCard = memo(function TransportationCard({
   index = 0
 }: TransportationCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [imageError, setImageError] = useState(false);
   
   const getPriceRangeLabel = (priceRange: string) => {
     switch (priceRange) {
@@ -51,10 +52,6 @@ const TransportationCard = memo(function TransportationCard({
   
   const priceInfo = getPriceRangeLabel(service.price_range);
   
-  const imageSrc = imageError || !service.images[0] 
-    ? getPlaceholderImage('transportation')
-    : service.images[0];
-
   // Only load the first few cards with priority
   const shouldPrioritize = index < 4;
 
@@ -70,8 +67,8 @@ const TransportationCard = memo(function TransportationCard({
       >
         {/* Image */}
         <div className="relative h-48 w-full overflow-hidden sm:h-52 md:h-48 lg:h-52">
-          <Image
-            src={imageSrc}
+          <OptimizedImage
+            src={service.images[0]}
             alt={service.name}
             fill
             sizes={getResponsiveImageSizes()}
@@ -79,10 +76,7 @@ const TransportationCard = memo(function TransportationCard({
               isHovered ? 'scale-110' : 'scale-100'
             }`}
             priority={shouldPrioritize}
-            loading={shouldPrioritize ? 'eager' : 'lazy'}
-            onError={() => setImageError(true)}
-            blurDataURL={generateBlurPlaceholder()}
-            placeholder="blur"
+            fallbackType="transportation"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           
@@ -94,14 +88,15 @@ const TransportationCard = memo(function TransportationCard({
           {/* Price range badge */}
           <div className="absolute bottom-3 right-3 rounded-md bg-background/80 px-2 py-1 text-xs font-medium backdrop-blur-sm flex items-center">
             <span className="mr-1 hidden sm:inline">{priceInfo.label}</span>
-            <div className="flex">
+            <div className="flex items-center">
               {Array.from({ length: 3 }).map((_, i) => (
-                <DollarSign 
+                <CircleDollarSign 
                   key={i} 
                   className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${i < priceInfo.icon ? 'text-primary' : 'text-muted-foreground/30'}`} 
                   aria-hidden={i >= priceInfo.icon}
                 />
               ))}
+              <span className="ml-1 text-xs">KWD</span>
             </div>
           </div>
         </div>

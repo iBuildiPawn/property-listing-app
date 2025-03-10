@@ -25,20 +25,5 @@ export function shouldLoadWithPriority(index: number, isVisible = true): boolean
   return index === 0 && isVisible;
 }
 
-/**
- * Generates a placeholder image URL based on the image type
- * @param type The type of image (property, transportation, etc.)
- * @returns A placeholder image URL
- */
-export function getPlaceholderImage(type: 'property' | 'transportation' | 'user' | 'default'): string {
-  switch (type) {
-    case 'property':
-      return '/placeholder-property.jpg';
-    case 'transportation':
-      return '/placeholder-transportation.jpg';
-    case 'user':
-      return '/placeholder-user.jpg';
-    default:
-      return '/placeholder-image.jpg';
-  }
-} 
+// Re-export getPlaceholderImage from image-utils for backward compatibility
+export { getPlaceholderImage } from './image-utils'; 

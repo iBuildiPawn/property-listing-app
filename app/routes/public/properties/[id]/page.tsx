@@ -14,8 +14,14 @@ import {
   Heart, 
   Share2, 
   ArrowLeft,
-  Check
+  Check,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn
 } from 'lucide-react';
+import { getValidImageUrl, getPlaceholderImage } from '@/app/utils/image-utils';
+import OptimizedImage from '@/app/components/ui/optimized-image';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 
@@ -25,6 +31,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
   const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const { user } = useAuth();
   
   useEffect(() => {
@@ -68,7 +75,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
   };
   
   const formatPrice = (price: number) => {
-    return `$${price.toLocaleString()}`;
+    return `${price.toLocaleString()} KWD`;
   };
   
   const handleShare = () => {
@@ -84,6 +91,56 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
       alert('Link copied to clipboard!');
     }
   };
+  
+  const openPreview = () => {
+    setIsPreviewOpen(true);
+    // Prevent scrolling when modal is open
+    document.body.style.overflow = 'hidden';
+  };
+  
+  const closePreview = () => {
+    setIsPreviewOpen(false);
+    // Restore scrolling when modal is closed
+    document.body.style.overflow = 'auto';
+  };
+  
+  const goToNextImage = () => {
+    if (property && property.images.length > 0) {
+      setActiveImageIndex((prevIndex) => 
+        prevIndex === property.images.length - 1 ? 0 : prevIndex + 1
+      );
+    }
+  };
+  
+  const goToPrevImage = () => {
+    if (property && property.images.length > 0) {
+      setActiveImageIndex((prevIndex) => 
+        prevIndex === 0 ? property.images.length - 1 : prevIndex - 1
+      );
+    }
+  };
+  
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isPreviewOpen) return;
+      
+      switch (e.key) {
+        case 'Escape':
+          closePreview();
+          break;
+        case 'ArrowRight':
+          goToNextImage();
+          break;
+        case 'ArrowLeft':
+          goToPrevImage();
+          break;
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isPreviewOpen, property]);
   
   if (isLoading) {
     return (
@@ -128,13 +185,22 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left column - Images */}
         <div className="lg:col-span-2">
-          <div className="relative rounded-lg overflow-hidden aspect-[16/9]">
-            <Image
-              src={property.images[activeImageIndex] || '/placeholder-property.jpg'}
+          <div 
+            className="relative rounded-lg overflow-hidden aspect-[16/9] cursor-pointer group"
+            onClick={openPreview}
+          >
+            <OptimizedImage
+              src={property.images[activeImageIndex]}
               alt={property.title}
               fill
               className="object-cover"
+              fallbackType="property"
             />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <div className="bg-black/50 rounded-full p-2">
+                <ZoomIn className="h-6 w-6 text-white" />
+              </div>
+            </div>
           </div>
           
           {property.images.length > 1 && (
@@ -142,16 +208,20 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               {property.images.map((image, index) => (
                 <button
                   key={index}
-                  onClick={() => setActiveImageIndex(index)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveImageIndex(index);
+                  }}
                   className={`relative aspect-square rounded-md overflow-hidden border-2 ${
                     activeImageIndex === index ? 'border-primary' : 'border-transparent'
                   }`}
                 >
-                  <Image
+                  <OptimizedImage
                     src={image}
                     alt={`${property.title} - Image ${index + 1}`}
                     fill
                     className="object-cover"
+                    fallbackType="property"
                   />
                 </button>
               ))}
@@ -210,7 +280,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                 </div>
                 <div className="flex items-center">
                   <Square className="mr-1 h-5 w-5 text-muted-foreground" />
-                  <span>{property.size} sqft</span>
+                  <span>{property.size} m²</span>
                 </div>
               </div>
               
@@ -240,6 +310,93 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           </div>
         </div>
       </div>
+      
+      {/* Image Preview Modal */}
+      {isPreviewOpen && (
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center">
+          <div className="relative w-full h-full flex flex-col">
+            {/* Close button */}
+            <button 
+              onClick={closePreview}
+              className="absolute top-4 right-4 z-10 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
+              aria-label="Close preview"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            
+            {/* Image counter */}
+            <div className="absolute top-4 left-4 z-10 bg-black/50 rounded-md px-3 py-1 text-white text-sm">
+              {activeImageIndex + 1} / {property.images.length}
+            </div>
+            
+            {/* Main image container */}
+            <div className="flex-1 flex items-center justify-center p-4 sm:p-10">
+              <div className="relative w-full h-full max-w-5xl max-h-[80vh] mx-auto">
+                <OptimizedImage
+                  src={property.images[activeImageIndex]}
+                  alt={property.title}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                  priority
+                  fallbackType="property"
+                />
+              </div>
+            </div>
+            
+            {/* Navigation buttons */}
+            {property.images.length > 1 && (
+              <>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToPrevImage();
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToNextImage();
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 rounded-full p-2 text-white hover:bg-black/70 transition-colors"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </>
+            )}
+            
+            {/* Thumbnail navigation */}
+            {property.images.length > 1 && (
+              <div className="p-4 flex justify-center">
+                <div className="flex space-x-2 overflow-x-auto max-w-full pb-2">
+                  {property.images.map((image, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setActiveImageIndex(index)}
+                      className={`relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden border-2 ${
+                        activeImageIndex === index ? 'border-primary' : 'border-transparent'
+                      }`}
+                    >
+                      <OptimizedImage
+                        src={image}
+                        alt={`Thumbnail ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        fallbackType="property"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       
       {/* Description */}
       <div className="mt-8">
