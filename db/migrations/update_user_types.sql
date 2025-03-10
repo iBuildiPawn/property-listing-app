@@ -31,8 +31,48 @@ UPDATE profiles
 SET is_admin = TRUE
 WHERE id = (SELECT id FROM profiles ORDER BY created_at LIMIT 1);
 
+-- Drop existing policies if they exist
+DO $$
+BEGIN
+  -- Drop policies for properties
+  BEGIN
+    DROP POLICY IF EXISTS "Admins can do anything" ON properties;
+    RAISE NOTICE 'Dropped existing admin policy on properties';
+  EXCEPTION
+    WHEN undefined_object THEN
+      RAISE NOTICE 'Admin policy on properties does not exist, creating new one';
+  END;
+  
+  -- Drop policies for transportation_services
+  BEGIN
+    DROP POLICY IF EXISTS "Admins can do anything" ON transportation_services;
+    RAISE NOTICE 'Dropped existing admin policy on transportation_services';
+  EXCEPTION
+    WHEN undefined_object THEN
+      RAISE NOTICE 'Admin policy on transportation_services does not exist, creating new one';
+  END;
+  
+  -- Drop policies for conversations
+  BEGIN
+    DROP POLICY IF EXISTS "Admins can view all conversations" ON conversations;
+    RAISE NOTICE 'Dropped existing admin policy on conversations';
+  EXCEPTION
+    WHEN undefined_object THEN
+      RAISE NOTICE 'Admin policy on conversations does not exist, creating new one';
+  END;
+  
+  -- Drop policies for user_preferences
+  BEGIN
+    DROP POLICY IF EXISTS "Admins can view all user preferences" ON user_preferences;
+    RAISE NOTICE 'Dropped existing admin policy on user_preferences';
+  EXCEPTION
+    WHEN undefined_object THEN
+      RAISE NOTICE 'Admin policy on user_preferences does not exist, creating new one';
+  END;
+END $$;
+
 -- Create RLS policy for admin access
-CREATE POLICY IF NOT EXISTS "Admins can do anything"
+CREATE POLICY "Admins can do anything"
 ON properties
 USING (
   EXISTS (
@@ -41,7 +81,7 @@ USING (
   )
 );
 
-CREATE POLICY IF NOT EXISTS "Admins can do anything"
+CREATE POLICY "Admins can do anything"
 ON transportation_services
 USING (
   EXISTS (
@@ -50,7 +90,7 @@ USING (
   )
 );
 
-CREATE POLICY IF NOT EXISTS "Admins can view all conversations"
+CREATE POLICY "Admins can view all conversations"
 ON conversations
 USING (
   EXISTS (
@@ -59,7 +99,7 @@ USING (
   )
 );
 
-CREATE POLICY IF NOT EXISTS "Admins can view all user preferences"
+CREATE POLICY "Admins can view all user preferences"
 ON user_preferences
 USING (
   EXISTS (
@@ -76,4 +116,4 @@ ALTER TABLE profiles ADD CONSTRAINT profiles_user_type_check CHECK (user_type IN
 DO $$
 BEGIN
   RAISE NOTICE 'Migration completed successfully';
-END $$; 
+END $$;

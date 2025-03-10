@@ -1,4 +1,4 @@
-import { Suspense, ReactNode, ComponentType, lazy, LazyExoticComponent } from 'react';
+import React, { Suspense, ReactNode, ComponentType, lazy } from 'react';
 import { PropertyCardSkeleton, TransportationCardSkeleton } from './loading-skeleton';
 
 interface LazyComponentProps {
@@ -18,43 +18,25 @@ export function LazyComponent({ children, fallback }: LazyComponentProps) {
 }
 
 /**
- * Creates a lazy-loaded property card component
- * @param importFunc - The import function for the component
- * @returns A lazy-loaded component with a property card skeleton fallback
+ * Creates a lazy-loaded component with a property card skeleton fallback
  */
-export function lazyPropertyCard<T>(
-  importFunc: () => Promise<{ default: ComponentType<T> }>
-): LazyExoticComponent<ComponentType<T>> {
-  const LazyComponent = lazy(importFunc);
-  
-  // Create a wrapper component with the appropriate fallback
-  const WrappedComponent = (props: T) => (
+export const lazyPropertyCard = <P extends {}>(importFunc: () => Promise<{ default: ComponentType<P> }>) => {
+  const Component = lazy(importFunc);
+  return (props: P) => (
     <Suspense fallback={<PropertyCardSkeleton />}>
-      <LazyComponent {...props} />
+      <Component {...props as any} />
     </Suspense>
   );
-  
-  // Cast to LazyExoticComponent to maintain type compatibility
-  return WrappedComponent as unknown as LazyExoticComponent<ComponentType<T>>;
-}
+};
 
 /**
- * Creates a lazy-loaded transportation card component
- * @param importFunc - The import function for the component
- * @returns A lazy-loaded component with a transportation card skeleton fallback
+ * Creates a lazy-loaded component with a transportation card skeleton fallback
  */
-export function lazyTransportationCard<T>(
-  importFunc: () => Promise<{ default: ComponentType<T> }>
-): LazyExoticComponent<ComponentType<T>> {
-  const LazyComponent = lazy(importFunc);
-  
-  // Create a wrapper component with the appropriate fallback
-  const WrappedComponent = (props: T) => (
+export const lazyTransportationCard = <P extends {}>(importFunc: () => Promise<{ default: ComponentType<P> }>) => {
+  const Component = lazy(importFunc);
+  return (props: P) => (
     <Suspense fallback={<TransportationCardSkeleton />}>
-      <LazyComponent {...props} />
+      <Component {...props as any} />
     </Suspense>
   );
-  
-  // Cast to LazyExoticComponent to maintain type compatibility
-  return WrappedComponent as unknown as LazyExoticComponent<ComponentType<T>>;
-} 
+}; 
