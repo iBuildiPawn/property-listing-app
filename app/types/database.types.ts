@@ -17,7 +17,8 @@ export interface Database {
           full_name: string | null
           avatar_url: string | null
           email: string
-          user_type: 'renter' | 'buyer' | 'investor' | 'student' | null
+          user_type: 'renter' | 'buyer' | null
+          is_admin: boolean
         }
         Insert: {
           id: string
@@ -26,7 +27,8 @@ export interface Database {
           full_name?: string | null
           avatar_url?: string | null
           email: string
-          user_type?: 'renter' | 'buyer' | 'investor' | 'student' | null
+          user_type?: 'renter' | 'buyer' | null
+          is_admin?: boolean
         }
         Update: {
           id?: string
@@ -35,8 +37,18 @@ export interface Database {
           full_name?: string | null
           avatar_url?: string | null
           email?: string
-          user_type?: 'renter' | 'buyer' | 'investor' | 'student' | null
+          user_type?: 'renter' | 'buyer' | null
+          is_admin?: boolean
         }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       properties: {
         Row: {

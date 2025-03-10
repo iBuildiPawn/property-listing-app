@@ -1,5 +1,28 @@
+-- Reset Database Script
+-- This script drops all tables and recreates them from scratch
+
+-- Drop tables in reverse order of dependencies
+DROP TABLE IF EXISTS conversations CASCADE;
+DROP TABLE IF EXISTS user_preferences CASCADE;
+DROP TABLE IF EXISTS transportation_services CASCADE;
+DROP TABLE IF EXISTS properties CASCADE;
+DROP TABLE IF EXISTS profiles CASCADE;
+
+-- Drop functions and triggers
+DROP FUNCTION IF EXISTS update_updated_at_column() CASCADE;
+DROP FUNCTION IF EXISTS storage_url() CASCADE;
+
+-- Re-run the create tables script
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Create a function to generate a storage URL
+CREATE OR REPLACE FUNCTION storage_url(bucket TEXT, path TEXT)
+RETURNS TEXT AS $$
+BEGIN
+  RETURN '/storage/v1/object/public/' || bucket || '/' || path;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Create profiles table
 CREATE TABLE IF NOT EXISTS profiles (
@@ -163,3 +186,9 @@ FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_conversations_updated_at
 BEFORE UPDATE ON conversations
 FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Confirmation message
+DO $$
+BEGIN
+    RAISE NOTICE 'Database has been completely reset. All tables have been recreated.';
+END $$; 

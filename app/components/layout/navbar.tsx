@@ -2,14 +2,36 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
-import { Menu, X, Home, MessageSquare, Building, Truck, User, LogOut } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Menu, X, Home, MessageSquare, Building, Truck, User, LogOut, Shield } from 'lucide-react';
 import { useAuth } from '@/app/contexts/auth-context';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Database } from '@/app/types/database.types';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const pathname = usePathname();
   const { user, signOut, isLoading } = useAuth();
+  const supabase = createClientComponentClient<Database>();
+
+  useEffect(() => {
+    async function checkAdminStatus() {
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('is_admin')
+          .eq('id', user.id)
+          .single();
+        
+        setIsAdmin(data?.is_admin || false);
+      } else {
+        setIsAdmin(false);
+      }
+    }
+    
+    checkAdminStatus();
+  }, [user, supabase]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -63,6 +85,15 @@ export default function Navbar() {
               <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-primary"></div>
             ) : user ? (
               <div className="flex items-center space-x-4">
+                {isAdmin && (
+                  <Link
+                    href="/routes/admin"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-primary hover:bg-primary/10"
+                  >
+                    <Shield className="h-4 w-4" />
+                    <span>Admin</span>
+                  </Link>
+                )}
                 <Link
                   href="/routes/dashboard"
                   className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-muted/50"
@@ -146,6 +177,16 @@ export default function Navbar() {
                       <div className="text-base font-medium">Account</div>
                     </div>
                   </div>
+                  {isAdmin && (
+                    <Link
+                      href="/routes/admin"
+                      onClick={closeMenu}
+                      className="block px-3 py-2 rounded-md text-base font-medium text-primary hover:bg-primary/10 flex items-center"
+                    >
+                      <Shield className="h-5 w-5 mr-2" />
+                      Admin Dashboard
+                    </Link>
+                  )}
                   <Link
                     href="/routes/dashboard"
                     onClick={closeMenu}
