@@ -6,7 +6,7 @@ import Navbar from '@/app/components/layout/navbar';
 import Footer from '@/app/components/layout/footer';
 import { AuthProvider } from '@/app/contexts/auth-context';
 import { PageTransition } from '@/app/components/animations';
-import { Toaster } from '@/app/components/ui/toast';
+import { Toaster } from '@/app/components/ui/sonner-toast';
 
 const inter = Inter({ subsets: ['latin'] });
 

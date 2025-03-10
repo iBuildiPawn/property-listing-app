@@ -7,7 +7,7 @@ import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/app/components/ui/table';
 import { Badge } from '@/app/components/ui/badge';
-import { toast } from '@/app/components/ui/use-toast';
+import { toast } from '@/app/components/ui/sonner-toast';
 import { Loader2, Search, Edit, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import Link from 'next/link';
 
