@@ -1,16 +1,26 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/app/contexts/auth-context';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [returnUrl, setReturnUrl] = useState('');
   const { signIn, isLoading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Get returnUrl from query parameters
+    const returnUrlParam = searchParams.get('returnUrl');
+    if (returnUrlParam) {
+      setReturnUrl(returnUrlParam);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +31,12 @@ export default function LoginPage() {
     if (error) {
       setError(error.message);
     } else {
-      router.push('/routes/dashboard');
+      // Redirect to returnUrl if available, otherwise to dashboard
+      if (returnUrl) {
+        router.push(returnUrl);
+      } else {
+        router.push('/routes/dashboard');
+      }
     }
   };
 
@@ -33,6 +48,11 @@ export default function LoginPage() {
           <p className="text-muted-foreground mt-2">
             Enter your credentials to access your account
           </p>
+          {returnUrl && (
+            <p className="text-sm text-primary mt-2">
+              You'll be redirected back to your previous page after login.
+            </p>
+          )}
         </div>
         
         {error && (
@@ -110,7 +130,7 @@ export default function LoginPage() {
         <div className="mt-6 text-center text-sm">
           <p>
             Don't have an account?{' '}
-            <Link href="/routes/auth/register" className="text-primary hover:text-primary/90">
+            <Link href={`/routes/auth/register${returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`} className="text-primary hover:text-primary/90">
               Register
             </Link>
           </p>
