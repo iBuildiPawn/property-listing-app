@@ -19,15 +19,27 @@ ALTER TABLE profiles ADD CONSTRAINT profiles_user_type_check
   CHECK (user_type IN ('renter', 'buyer', 'owner'));
 
 -- Update RLS policies for property owners
--- Allow owners to insert properties
-CREATE POLICY IF NOT EXISTS "Owners can insert properties" 
-ON properties FOR INSERT 
-WITH CHECK (
-  auth.uid() IN (
-    SELECT id FROM profiles 
-    WHERE user_type = 'owner' OR is_admin = TRUE
-  )
-);
+-- Check if the policy already exists and create it if it doesn't
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE tablename = 'properties' 
+    AND policyname = 'Owners can insert properties'
+  ) THEN
+    EXECUTE 'CREATE POLICY "Owners can insert properties" 
+    ON properties FOR INSERT 
+    WITH CHECK (
+      auth.uid() IN (
+        SELECT id FROM profiles 
+        WHERE user_type = ''owner'' OR is_admin = TRUE
+      )
+    )';
+    RAISE NOTICE 'Created new policy for property owners';
+  ELSE
+    RAISE NOTICE 'Policy for property owners already exists';
+  END IF;
+END $$;
 
 -- Output a message
 DO $$
