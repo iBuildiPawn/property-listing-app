@@ -52,8 +52,9 @@ There are several ways to create these test users:
 1. Log in to your Supabase dashboard.
 2. Navigate to the SQL Editor.
 3. Choose one of the following SQL scripts:
-   - `db/migrations/create_test_users.sql` - Uses direct table access (may require elevated privileges)
-   - `db/migrations/create_test_users_alt.sql` - Uses Supabase's auth API (recommended)
+   - `db/migrations/create_test_users_admin.sql` - Direct insertion into auth tables (most reliable)
+   - `db/migrations/create_test_users.sql` - Uses direct table access with UUID generation
+   - `db/migrations/create_test_users_alt.sql` - Uses Supabase's auth API (may not work in all environments)
 4. Paste the SQL into the editor and run it.
 5. Check the logs to confirm the users were created successfully.
 
@@ -96,9 +97,10 @@ VALUES
 If you encounter issues creating or using test users:
 
 1. **Permission Issues**: 
-   - The `create_test_users.sql` script requires direct access to the `auth.users` table, which may be restricted.
-   - Try using the `create_test_users_alt.sql` script which uses Supabase's auth API.
-   - If both fail, use Method 3 (manual creation).
+   - Try using the `create_test_users_admin.sql` script first, which directly inserts into auth tables.
+   - If that fails, the `create_test_users.sql` script requires direct access to the `auth.users` table.
+   - The `create_test_users_alt.sql` script uses Supabase's auth API but may not work in all environments.
+   - If all scripts fail, use Method 3 (manual creation).
 
 2. **Database Constraints**: 
    - Make sure the user_type values match the allowed values in the database ('renter', 'buyer', 'owner').
@@ -110,6 +112,11 @@ If you encounter issues creating or using test users:
 
 4. **RLS Policies**: 
    - Ensure Row Level Security policies are correctly set up for each role.
+
+5. **Common Errors**:
+   - "function auth.create_user() does not exist" - Use the `create_test_users_admin.sql` script instead.
+   - "column reference is ambiguous" - This has been fixed in the latest scripts.
+   - "null value in column violates not-null constraint" - Use the `create_test_users_admin.sql` script.
 
 ## Cleaning Up Test Users
 

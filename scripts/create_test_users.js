@@ -23,39 +23,50 @@ async function createTestUsers() {
   try {
     console.log('Creating test users for each role...');
     
-    // Try the alternative method first (using Supabase's auth API)
+    // Try the admin method first (most reliable)
+    const adminSqlFilePath = path.join(__dirname, '../db/migrations/create_test_users_admin.sql');
+    const adminSqlContent = fs.readFileSync(adminSqlFilePath, 'utf8');
+    
+    console.log('Attempting to create users using direct auth table insertion (admin method)...');
+    const { error: adminError } = await supabase.rpc('exec_sql', { sql: adminSqlContent });
+    
+    if (!adminError) {
+      console.log('✅ Test users created successfully using admin method!');
+      outputCredentials();
+      return;
+    }
+    
+    console.log('⚠️ Could not create users with admin method:', adminError.message);
+    console.log('Trying direct table access method...');
+    
+    // If the admin method fails, try the direct table access method
+    const sqlFilePath = path.join(__dirname, '../db/migrations/create_test_users.sql');
+    const sqlContent = fs.readFileSync(sqlFilePath, 'utf8');
+    
+    const { error } = await supabase.rpc('exec_sql', { sql: sqlContent });
+    
+    if (!error) {
+      console.log('✅ Test users created successfully using direct table access!');
+      outputCredentials();
+      return;
+    }
+    
+    console.log('⚠️ Could not create users with direct table access method:', error.message);
+    console.log('Trying Supabase auth API method...');
+    
+    // If both previous methods fail, try the auth API method
     const altSqlFilePath = path.join(__dirname, '../db/migrations/create_test_users_alt.sql');
     const altSqlContent = fs.readFileSync(altSqlFilePath, 'utf8');
     
-    console.log('Attempting to create users using Supabase auth API...');
     const { error: altError } = await supabase.rpc('exec_sql', { sql: altSqlContent });
     
     if (!altError) {
       console.log('✅ Test users created successfully using Supabase auth API!');
-    } else {
-      console.log('⚠️ Could not create users with Supabase auth API method:', altError.message);
-      console.log('Trying direct table access method...');
-      
-      // If the alternative method fails, try the direct table access method
-      const sqlFilePath = path.join(__dirname, '../db/migrations/create_test_users.sql');
-      const sqlContent = fs.readFileSync(sqlFilePath, 'utf8');
-      
-      const { error } = await supabase.rpc('exec_sql', { sql: sqlContent });
-      
-      if (error) {
-        throw error;
-      } else {
-        console.log('✅ Test users created successfully using direct table access!');
-      }
+      outputCredentials();
+      return;
     }
     
-    console.log('\nTest User Credentials:');
-    console.log('------------------------');
-    console.log('Renter: test.renter@example.com / password123');
-    console.log('Buyer: test.buyer@example.com / password123');
-    console.log('Owner: test.owner@example.com / password123');
-    console.log('Admin: test.admin@example.com / password123');
-    console.log('\nYou can now log in with these credentials in the application.');
+    throw new Error('All methods failed. See error messages above for details.');
     
   } catch (error) {
     console.error('❌ Error creating test users:', error.message);
@@ -73,13 +84,24 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
       `);
       console.error('\nAlternatively, you can run the SQL files directly in the Supabase SQL editor:');
-      console.error(`- ${path.join(__dirname, '../db/migrations/create_test_users_alt.sql')}`);
-      console.error(`- ${path.join(__dirname, '../db/migrations/create_test_users.sql')}`);
+      console.error(`1. ${path.join(__dirname, '../db/migrations/create_test_users_admin.sql')} (most reliable)`);
+      console.error(`2. ${path.join(__dirname, '../db/migrations/create_test_users.sql')}`);
+      console.error(`3. ${path.join(__dirname, '../db/migrations/create_test_users_alt.sql')}`);
     } else if (error.message.includes('permission denied')) {
       console.error('\nPermission denied. Your service role key might not have sufficient privileges.');
       console.error('Try running the SQL directly in the Supabase SQL editor or use the manual method described in docs/TEST_USERS.md');
     }
   }
+}
+
+function outputCredentials() {
+  console.log('\nTest User Credentials:');
+  console.log('------------------------');
+  console.log('Renter: test.renter@example.com / password123');
+  console.log('Buyer: test.buyer@example.com / password123');
+  console.log('Owner: test.owner@example.com / password123');
+  console.log('Admin: test.admin@example.com / password123');
+  console.log('\nYou can now log in with these credentials in the application.');
 }
 
 createTestUsers(); 
