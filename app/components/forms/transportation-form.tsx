@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useAuth } from '@/app/contexts/auth-context';
+import { supabase } from '@/app/lib/supabase';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/app/components/ui/button';
@@ -66,8 +67,7 @@ interface TransportationFormProps {
 
 export function TransportationForm({ initialData, serviceId }: TransportationFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const supabaseClient = useSupabaseClient();
-  const user = useUser();
+  const { user } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const isEditing = !!serviceId;
@@ -104,12 +104,12 @@ export function TransportationForm({ initialData, serviceId }: TransportationFor
       let response;
 
       if (isEditing) {
-        response = await supabaseClient
+        response = await supabase
           .from('transportation_services')
           .update(serviceData)
           .eq('id', serviceId);
       } else {
-        response = await supabaseClient
+        response = await supabase
           .from('transportation_services')
           .insert({
             ...serviceData,

@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
+import { useAuth } from '@/app/contexts/auth-context';
+import { supabase } from '@/app/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
@@ -38,6 +39,7 @@ const profileFormSchema = z.object({
   email: z.string().email({
     message: 'Please enter a valid email address.',
   }),
+  bio: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -48,13 +50,13 @@ interface ProfileFormProps {
     avatar_url?: string;
     user_type?: 'renter' | 'buyer' | 'owner';
     email?: string;
+    bio?: string;
   };
 }
 
 export function ProfileForm({ initialData }: ProfileFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const supabaseClient = useSupabaseClient();
-  const user = useUser();
+  const { user } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const supabase = createClientComponentClient();
@@ -66,6 +68,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
       avatar_url: initialData?.avatar_url || '',
       user_type: initialData?.user_type || 'renter',
       email: initialData?.email || '',
+      bio: initialData?.bio || '',
     },
   });
 
@@ -77,15 +80,15 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
         throw new Error('No user found');
       }
 
-      const { error } = await supabaseClient
+      const { error } = await supabase
         .from('profiles')
-        .upsert({
-          id: user.id,
+        .update({
           full_name: data.full_name,
-          avatar_url: data.avatar_url,
           user_type: data.user_type,
+          bio: data.bio,
           updated_at: new Date().toISOString(),
-        });
+        })
+        .eq('id', user.id);
 
       if (error) {
         throw error;
@@ -169,6 +172,22 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                   </Select>
                   <FormDescription>
                     This helps us personalize your experience.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Bio</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Write a short bio about yourself" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    This helps others understand more about you.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

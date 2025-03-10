@@ -4,7 +4,7 @@ import { Button } from '@/app/components/ui/button';
 import { Loader2, Upload, Camera } from 'lucide-react';
 import { uploadFile, StorageBucket } from '@/app/utils/storage-helpers';
 import { useToast } from '@/app/components/ui/use-toast';
-import { useUser } from '@supabase/auth-helpers-react';
+import { useAuth } from '@/app/contexts/auth-context';
 
 interface AvatarUploadProps {
   initialImage?: string;
@@ -23,7 +23,7 @@ export function AvatarUpload({
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const user = useUser();
+  const { user } = useAuth();
 
   // Size mapping
   const sizeClasses = {

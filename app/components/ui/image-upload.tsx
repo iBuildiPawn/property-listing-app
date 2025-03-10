@@ -4,7 +4,7 @@ import { Button } from '@/app/components/ui/button';
 import { Loader2, Upload, X, Plus } from 'lucide-react';
 import { uploadFile, uploadMultipleFiles, StorageBucket } from '@/app/utils/storage-helpers';
 import { useToast } from '@/app/components/ui/use-toast';
-import { useUser } from '@supabase/auth-helpers-react';
+import { useAuth } from '@/app/contexts/auth-context';
 
 interface ImageUploadProps {
   bucket: StorageBucket;
@@ -29,7 +29,7 @@ export function ImageUpload({
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const user = useUser();
+  const { user } = useAuth();
 
   const handleUpload = useCallback(async (files: FileList) => {
     try {
